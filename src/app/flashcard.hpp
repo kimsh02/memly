@@ -22,17 +22,6 @@ public:
         , m_AudioPath(std::move(audioPath))
         , m_ImagePath(std::move(imagePath)) {}
 
-    explicit FlashCard(std::string frontText,
-                       std::string backText,
-                       std::string langSrc,
-                       std::string langDst)
-        : FlashCard(std::move(frontText),
-                    std::move(backText),
-                    std::move(langSrc),
-                    std::move(langDst),
-                    std::nullopt,
-                    std::nullopt) {}
-
     // Setters
     void SetFrontText(std::string text) { m_FrontText = std::move(text); }
 
