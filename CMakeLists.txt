@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.25)
 project(repetition-ai LANGUAGES C CXX)
 
+# set(QT_QML_GENERATE_QMLLS_INI ON)  # generate .qmlls.ini for QML imports/tooling
+
 # ------------------------ Multi-configs ------------------------
 set(CMAKE_CONFIGURATION_TYPES memory thread release
     CACHE STRING "Available build configs" FORCE)
@@ -30,13 +32,18 @@ qt_add_executable(repetition-ai
   ${ALL_SOURCES}
 )
 
+# qt_import_qml_plugins(repetition-ai)  # ensure QtQuick/QML plugins are discoverable at runtime
+
 # Package QML and assets into the binary at qrc:/qml and qrc:/assets
 qt_add_resources(repetition-ai "qml"
   PREFIX "/qml"
+  BASE "${CMAKE_SOURCE_DIR}/src/qml"
   FILES ${QML_FILES}
 )
+
 qt_add_resources(repetition-ai "assets"
   PREFIX "/assets"
+  BASE "${CMAKE_SOURCE_DIR}/src/assets"
   FILES ${ASSETS}
 )
 

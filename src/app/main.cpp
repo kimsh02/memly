@@ -1,8 +1,21 @@
-#include <print>
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
 
-#include "flashcard.hpp"
+int main(int argc, char* argv[]) {
+    QGuiApplication       app(argc, argv);
+    QQmlApplicationEngine engine;
 
-int main() {
-    FlashCard card("Front", "Back", "en", "fr", std::nullopt, std::nullopt);
-    std::println("Front: {}", card.GetFrontText());
- }
+    const QUrl url(QStringLiteral("qrc:/qml/Main.qml"));
+
+    QObject::connect(
+        &engine,
+        &QQmlApplicationEngine::objectCreated,
+        &app,
+        [url](QObject* obj, const QUrl& objUrl) {
+            if (!obj && url == objUrl) { QCoreApplication::exit(-1); }
+        },
+        Qt::QueuedConnection);
+
+    engine.load(url);
+    return app.exec();
+}
