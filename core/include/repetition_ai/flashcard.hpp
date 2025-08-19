@@ -1,31 +1,50 @@
 #pragma once
-#include <filesystem>
+
 #include <optional>
 #include <string>
 
+using PathString = std::string;
+
 class FlashCard {
 public:
-    using path = std::filesystem::path;
-
     FlashCard() = default;
 
-    // Pass-by-value setters
-    void SetFrontText(std::string text) noexcept { m_FrontText = std::move(text); }
+    explicit FlashCard(std::string               frontText,
+                       std::string               backText,
+                       std::string               langSrc,
+                       std::string               langDst,
+                       std::optional<PathString> audioPath,
+                       std::optional<PathString> imagePath)
+        : m_FrontText(std::move(frontText))
+        , m_BackText(std::move(backText))
+        , m_LangSrc(std::move(langSrc))
+        , m_LangDst(std::move(langDst))
+        , m_AudioPath(std::move(audioPath))
+        , m_ImagePath(std::move(imagePath)) {}
 
-    void SetBackText(std::string text) noexcept { m_BackText = std::move(text); }
+    explicit FlashCard(std::string frontText,
+                       std::string backText,
+                       std::string langSrc,
+                       std::string langDst)
+        : FlashCard(std::move(frontText),
+                    std::move(backText),
+                    std::move(langSrc),
+                    std::move(langDst),
+                    std::nullopt,
+                    std::nullopt) {}
 
-    void SetLangSrc(std::string lang) noexcept { m_LangSrc = std::move(lang); }
+    // Setters
+    void SetFrontText(std::string text) { m_FrontText = std::move(text); }
 
-    void SetLangDest(std::string lang) noexcept { m_LangDest = std::move(lang); }
+    void SetBackText(std::string text) { m_BackText = std::move(text); }
 
-    void SetAudioReference(path p) noexcept { m_AudioPath = std::move(p); }
+    void SetLangSrc(std::string lang) { m_LangSrc = std::move(lang); }
 
-    void SetImageReference(path p) noexcept { m_ImagePath = std::move(p); }
+    void SetLangDst(std::string lang) { m_LangDst = std::move(lang); }
 
-    // Clear references
-    void ClearAudioReference() noexcept { m_AudioPath.reset(); }
+    void SetAudioPath(std::optional<PathString> path) { m_AudioPath = std::move(path); }
 
-    void ClearImageReference() noexcept { m_ImagePath.reset(); }
+    void SetImagePath(std::optional<PathString> path) { m_ImagePath = std::move(path); }
 
     // Getters
     const std::string& GetFrontText() const noexcept { return m_FrontText; }
@@ -34,11 +53,11 @@ public:
 
     const std::string& GetLangSrc() const noexcept { return m_LangSrc; }
 
-    const std::string& GetLangDest() const noexcept { return m_LangDest; }
+    const std::string& GetLangDst() const noexcept { return m_LangDst; }
 
-    const std::optional<path>& GetAudioPath() const noexcept { return m_AudioPath; }
+    const std::optional<PathString>& GetAudioPath() const noexcept { return m_AudioPath; }
 
-    const std::optional<path>& GetImagePath() const noexcept { return m_ImagePath; }
+    const std::optional<PathString>& GetImagePath() const noexcept { return m_ImagePath; }
 
     // Operators
     auto operator<=>(const FlashCard& other) const noexcept {
@@ -53,8 +72,8 @@ private:
     std::string m_FrontText;
     std::string m_BackText;
     std::string m_LangSrc;
-    std::string m_LangDest;
+    std::string m_LangDst;
 
-    std::optional<path> m_AudioPath;
-    std::optional<path> m_ImagePath;
+    std::optional<PathString> m_AudioPath;
+    std::optional<PathString> m_ImagePath;
 };
