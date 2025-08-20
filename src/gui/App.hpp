@@ -1,0 +1,12 @@
+#pragma once
+#include <QQmlApplicationEngine>
+#include <QUrl>
+
+class App final {
+public:
+    // Returns true on successful QML load.
+    bool Init(const QUrl& mainUrl = QUrl("qrc:/qml/Main.qml"));
+
+private:
+    QQmlApplicationEngine m_Engine; // Lives after QGuiApplication is constructed.
+};

@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "flashcard.hpp"
+#include "models/Flashcard.hpp"
 
 class Deck {
 public:

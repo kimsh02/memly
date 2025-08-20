@@ -1,54 +1,62 @@
 cmake_minimum_required(VERSION 3.25)
 project(repetition-ai LANGUAGES C CXX)
 
-# set(QT_QML_GENERATE_QMLLS_INI ON)  # generate .qmlls.ini for QML imports/tooling
+# Silence FindBoost policy warning
+if(POLICY CMP0167)
+  cmake_policy(SET CMP0167 NEW)
+endif()
 
 # ------------------------ Multi-configs ------------------------
 set(CMAKE_CONFIGURATION_TYPES memory thread release
-    CACHE STRING "Available build configs" FORCE)
+  CACHE STRING "Available build configs" FORCE)
 
 # ------------------------ Compile DB ---------------------------
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(QT_QML_GENERATE_QMLLS_INI ON)
 
-# ------------------------ Qt 6 (no fallback) -------------------
-# If Qt isn't found, set CMAKE_PREFIX_PATH to your Qt prefix (e.g., $(brew --prefix qt))
+# ------------------------ Qt 6 ------------------------
 find_package(Qt6 REQUIRED COMPONENTS Quick Qml)
 
+# ------------------------ Boost (uuid via headers) ------------------------
+find_package(Boost REQUIRED) # use Boost::headers
+
 # ------------------------ Sources ------------------------------
-# Use CONFIGURE_DEPENDS so CMake regenerates when files are added/removed.
-file(GLOB_RECURSE APP_CPP   CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/app/*.cpp")
-file(GLOB_RECURSE APP_HDR   CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/app/*.[Hh]*")
-file(GLOB_RECURSE QML_FILES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/qml/*.qml")
-file(GLOB_RECURSE ASSETS    CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/assets/*")
+file(GLOB SRC_MAIN CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/main.cpp")
+file(GLOB_RECURSE GUI_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/gui/*.cpp")
+file(GLOB_RECURSE GUI_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/gui/*.[Hh]*")
+file(GLOB_RECURSE MODEL_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/models/*.[Hh]*")
+file(GLOB_RECURSE SERVICE_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/services/*.[Hh]*")
+file(GLOB_RECURSE DB_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/database/*.[Hh]*")
+file(GLOB_RECURSE QML_FILES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/gui/qml/*.qml")
+file(GLOB_RECURSE ASSETS CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/gui/assets/*")
 
 set(ALL_SOURCES
-  ${APP_CPP} ${APP_HDR}
+  ${SRC_MAIN}
+  ${GUI_CPP} ${GUI_HDR}
+  ${MODEL_HDR} ${SERVICE_HDR} ${DB_HDR}
 )
 
 # ------------------------ Target -------------------------------
-# qt_add_executable sets up AUTOMOC/AUTOUIC/AUTORCC for Qt6.
 qt_add_executable(repetition-ai
   MANUAL_FINALIZATION
   ${ALL_SOURCES}
 )
 
-# qt_import_qml_plugins(repetition-ai)  # ensure QtQuick/QML plugins are discoverable at runtime
-
-# Package QML and assets into the binary at qrc:/qml and qrc:/assets
+# QML and assets -> qrc:/qml and qrc:/assets
 qt_add_resources(repetition-ai "qml"
   PREFIX "/qml"
-  BASE "${CMAKE_SOURCE_DIR}/src/qml"
+  BASE "${CMAKE_SOURCE_DIR}/src/gui/qml"
   FILES ${QML_FILES}
 )
-
 qt_add_resources(repetition-ai "assets"
   PREFIX "/assets"
-  BASE "${CMAKE_SOURCE_DIR}/src/assets"
+  BASE "${CMAKE_SOURCE_DIR}/src/gui/assets"
   FILES ${ASSETS}
 )
 
+# include root one level up (src)
 target_include_directories(repetition-ai PRIVATE
-  "${CMAKE_SOURCE_DIR}/src/app"
+  "${CMAKE_SOURCE_DIR}/src"
   "${CMAKE_SOURCE_DIR}"
 )
 
@@ -78,18 +86,20 @@ target_compile_definitions(repetition-ai PRIVATE
 
 # ------------------------ Coverage (optional) ------------------
 option(ENABLE_COVERAGE "Enable coverage reporting" OFF)
-if (ENABLE_COVERAGE)
+if(ENABLE_COVERAGE)
   message(STATUS "Building with coverage flags…")
   target_compile_options(repetition-ai PRIVATE -fprofile-instr-generate -fcoverage-mapping)
-  if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+  if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     target_link_options(repetition-ai PRIVATE -lclang_rt.profile_osx)
   else()
     target_link_options(repetition-ai PRIVATE -lclang_rt.profile)
   endif()
 endif()
 
-# ------------------------ Link Qt 6 ----------------------------
-target_link_libraries(repetition-ai PRIVATE Qt6::Quick Qt6::Qml)
-
-# ------------------------ Finalize Qt 6 ------------------------
+# ------------------------ Link ----------------------------
+target_link_libraries(repetition-ai PRIVATE
+  Qt6::Quick Qt6::Qml
+  Boost::headers
+)
+qt_import_qml_plugins(repetition-ai)
 qt_finalize_executable(repetition-ai)
