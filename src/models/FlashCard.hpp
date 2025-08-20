@@ -4,12 +4,10 @@
 #include <optional>
 #include <string>
 
-using PathString = std::string; // std::filesystem::path
-using DayString  = std::string; // std::chrono::sys_days
-
 enum class Rating : std::uint8_t { Again, Hard, Good, Easy };
 
 struct ReviewState {
+    using DayString = std::string; // std::chrono::sys_days
     double Difficulty, Stability;
     int    Reviews, Lapses;
 
@@ -34,6 +32,7 @@ struct ReviewState {
 };
 
 struct CardContent {
+    using PathString = std::string; // std::filesystem::path
     std::string FrontText, BackText, LangSrc, LangDst;
 
     std::optional<PathString> AudioPath, ImagePath;
@@ -58,7 +57,7 @@ struct CardContent {
         , ImagePath(std::move(imagePath)) {}
 };
 
-struct FlashCard {
+struct FlashCard final {
     CardContent Content;
     ReviewState State;
 
