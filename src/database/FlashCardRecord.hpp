@@ -1,32 +1,35 @@
 #pragma once
 
-#include <boost/uuid/uuid.hpp>
-
-#include <optional>
-#include <string>
-
+#include "common/Types.hpp"
 #include "models/FlashCard.hpp"
 
-struct FlashCardRecord {
-    using TimeString = std::string; // SQLite "YYYY-MM-DD HH:MM:SS" TEXT
-    using ID         = boost::uuids::uuid;
+struct FlashCardContext {
+    const Types::TimeString   Created;
+    Types::ID                 DeckID;
+    Types::OptionalTimeString LastUpdated, LastReviewed;
 
-    const ID                  DeckID;
-    FlashCard                 Card;
-    const TimeString          TimeCreated;
-    std::optional<TimeString> TimeUpdated;
+    FlashCardContext(const FlashCardContext&)            = delete;
+    FlashCardContext& operator=(const FlashCardContext&) = delete;
 
-    FlashCardRecord(const FlashCardRecord&)               = delete;
-    FlashCardRecord& operator=(const FlashCardRecord&)    = delete;
-    FlashCardRecord(FlashCardRecord&&) noexcept           = delete;
-    FlashCardRecord operator=(FlashCardRecord&&) noexcept = delete;
+    FlashCardContext(FlashCardContext&&) noexcept            = default;
+    FlashCardContext& operator=(FlashCardContext&&) noexcept = delete;
 
-    explicit FlashCardRecord(ID&&                        deckID,
-                             FlashCard&&                 card,
-                             TimeString&&                timeCreated,
-                             std::optional<TimeString>&& timeUpdated = std::nullopt) noexcept
-        : DeckID(std::move(deckID))
-        , Card(std::move(card))
-        , TimeCreated(std::move(timeCreated))
-        , TimeUpdated(std::move(timeUpdated)) {}
+    FlashCardContext(Types::TimeString&& created, const Types::ID& deckID)
+        : Created(std::move(created))
+        , DeckID(std::move(deckID)) {}
+};
+
+struct FlashCardRecord final {
+    FlashCardContext FlashCardContext;
+    FlashCard        FlashCard;
+
+    FlashCardRecord(const FlashCardRecord&)                = delete;
+    FlashCardRecord& operator=(const FlashCardRecord&)     = delete;
+    FlashCardRecord(FlashCardRecord&&) noexcept            = delete;
+    FlashCardRecord& operator=(FlashCardRecord&&) noexcept = delete;
+
+    explicit FlashCardRecord(struct FlashCardContext&& flashCardContext,
+                             struct FlashCard&&        flashCard)
+        : FlashCardContext(std::move(flashCardContext))
+        , FlashCard(std::move(flashCard)) {}
 };
