@@ -31,10 +31,27 @@ struct ReviewState {
         , Due(std::move(due)) {}
 };
 
+struct AudioResource {
+    Types::PathString NormalSpeed, SlowSpeed;
+
+    AudioResource(const AudioResource&)            = delete;
+    AudioResource& operator=(const AudioResource&) = delete;
+
+    AudioResource(AudioResource&&) noexcept            = default;
+    AudioResource& operator=(AudioResource&&) noexcept = delete;
+
+    AudioResource(Types::PathString&& normalSpeed, Types::PathString&& slowSpeed) noexcept
+        : NormalSpeed(std::move(normalSpeed))
+        , SlowSpeed(std::move(slowSpeed)) {}
+};
+
 struct CardContent {
+    using OptionalAudioResource = std::optional<AudioResource>;
+
     std::string FrontText, BackText;
 
-    Types::OptionalPathString AudioPath, ImagePath;
+    OptionalAudioResource     Audio;
+    Types::OptionalPathString Image;
 
     CardContent(const CardContent&)            = delete;
     CardContent& operator=(const CardContent&) = delete;
@@ -44,12 +61,12 @@ struct CardContent {
 
     explicit CardContent(std::string&&               frontText,
                          std::string&&               backText,
-                         Types::OptionalPathString&& audioPath,
-                         Types::OptionalPathString&& imagePath) noexcept
+                         OptionalAudioResource&&     audio,
+                         Types::OptionalPathString&& image) noexcept
         : FrontText(std::move(frontText))
         , BackText(std::move(backText))
-        , AudioPath(std::move(audioPath))
-        , ImagePath(std::move(imagePath)) {}
+        , Audio(std::move(audio))
+        , Image(std::move(image)) {}
 };
 
 struct FlashCard final {

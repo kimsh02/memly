@@ -5,6 +5,7 @@
 
 struct FlashCardContext {
     const Types::TimeString   Created;
+    const Types::ID           ID;
     Types::ID                 DeckID;
     Types::OptionalTimeString LastUpdated, LastReviewed;
 
@@ -14,9 +15,12 @@ struct FlashCardContext {
     FlashCardContext(FlashCardContext&&) noexcept            = default;
     FlashCardContext& operator=(FlashCardContext&&) noexcept = delete;
 
-    FlashCardContext(Types::TimeString&& created, const Types::ID& deckID)
+    explicit FlashCardContext(Types::TimeString&& created,
+                              const Types::ID&    id,
+                              const Types::ID&    deckID)
         : Created(std::move(created))
-        , DeckID(std::move(deckID)) {}
+        , ID(id)
+        , DeckID(deckID) {}
 };
 
 struct FlashCardRecord final {
