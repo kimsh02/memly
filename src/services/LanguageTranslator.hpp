@@ -13,28 +13,19 @@ public:
     LanguageTranslator(LanguageTranslator&&) noexcept            = delete;
     LanguageTranslator& operator=(LanguageTranslator&&) noexcept = delete;
 
-    LanguageTranslator() noexcept {
-        loadLastLanguageSrcUsedIndex();
-        loadLastLanguageDstUsedIndex();
-    }
-
-    [[nodiscard]] std::string Translate(std::string_view text) const;
+    LanguageTranslator() noexcept { loadLastTargetIndex(); }
 
     [[nodiscard]] std::span<const std::string_view> GetLatinLangNames() const noexcept {
         return s_LatinLangNames;
     }
 
-    [[nodiscard]] std::string_view GetLangSrcName() const noexcept {
-        return s_LatinLangNames[m_LanguageSrcIndex];
+    [[nodiscard]] std::string_view GetTargetLangName() const noexcept {
+        return s_LatinLangNames[m_TargetIndex];
     }
 
-    [[nodiscard]] std::string_view GetLangDstName() const noexcept {
-        return s_LatinLangNames[m_LanguageDstIndex];
-    }
+    [[nodiscard]] std::size_t GetTargetIndex() const noexcept { return m_TargetIndex; }
 
-    [[nodiscard]] std::size_t GetLangSrcIndex() const noexcept { return m_LanguageSrcIndex; }
-
-    [[nodiscard]] std::size_t GetLangDstIndex() const noexcept { return m_LanguageDstIndex; }
+    void SetTargetIndex(std::size_t index) noexcept;
 
 private:
     inline static constexpr std::array<std::string_view, 60> s_LatinLangCodes = {
@@ -59,12 +50,7 @@ private:
     };
     static_assert(s_LatinLangCodes.size() == s_LatinLangNames.size());
 
-    std::size_t m_LanguageSrcIndex;
-    std::size_t m_LanguageDstIndex;
+    std::size_t m_TargetIndex;
 
-    void loadLastLanguageSrcUsedIndex() noexcept;
-    void loadLastLanguageDstUsedIndex() noexcept;
-
-    void setLanguageSrcIndex(std::size_t index) noexcept;
-    void setLanguageDstIndex(std::size_t index) noexcept;
+    void loadLastTargetIndex() noexcept;
 };

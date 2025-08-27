@@ -3,7 +3,7 @@
 #include <unordered_map>
 
 #include "common/Types.hpp"
-#include "database/FlashCardRecord.hpp"
+#include "database_qt/FlashCardRecord.hpp"
 #include "models/FlashCard.hpp"
 
 class CardStore final {

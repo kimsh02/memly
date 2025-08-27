@@ -12,12 +12,12 @@ struct DeckRecordContext {
     DeckRecordContext(DeckRecordContext&&) noexcept            = default;
     DeckRecordContext& operator=(DeckRecordContext&&) noexcept = delete;
 
-    explicit DeckRecordContext(const Types::ID& id)
+    explicit DeckRecordContext(const Types::ID& id) noexcept
         : ID(id) {}
 };
 
 struct DeckRecord final {
-    DeckRecordContext DeckRecordContextContext;
+    DeckRecordContext DeckRecordContext;
     Deck              Deck;
 
     DeckRecord(const DeckRecord&)                = delete;
@@ -25,7 +25,7 @@ struct DeckRecord final {
     DeckRecord(DeckRecord&&) noexcept            = delete;
     DeckRecord& operator=(DeckRecord&&) noexcept = delete;
 
-    explicit DeckRecord(struct DeckRecordContext&& deckRecordContext, struct Deck&& deck)
-        : DeckRecordContextContext(std::move(deckRecordContext))
+    explicit DeckRecord(struct DeckRecordContext&& deckRecordContext, struct Deck&& deck) noexcept
+        : DeckRecordContext(std::move(deckRecordContext))
         , Deck(std::move(deck)) {}
 };

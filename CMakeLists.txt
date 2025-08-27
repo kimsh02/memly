@@ -14,7 +14,7 @@ set(QT_QML_GENERATE_QMLLS_INI ON)
 
 # ------------------------ Dependencies (via vcpkg) -------------
 set(QT_NO_PRIVATE_MODULE_WARNING ON)
-find_package(Qt6 REQUIRED COMPONENTS Quick Qml)
+find_package(Qt6 REQUIRED COMPONENTS Quick Qml Network Core Sql)
 
 find_package(google_cloud_cpp_translate REQUIRED CONFIG)
 find_package(google_cloud_cpp_texttospeech REQUIRED CONFIG)
@@ -73,7 +73,7 @@ target_compile_options(repetition-ai PRIVATE -Wall -Wextra -Wunused -pedantic -W
 
 # ------------------------ Link ----------------------------
 target_link_libraries(repetition-ai PRIVATE
-  Qt6::Quick Qt6::Qml
+  Qt6::Quick Qt6::Qml Qt6::Network Qt6::Core Qt6::Sql
   Boost::uuid
   google-cloud-cpp::translate
   google-cloud-cpp::texttospeech

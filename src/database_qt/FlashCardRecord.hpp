@@ -17,7 +17,7 @@ struct FlashCardContext {
 
     explicit FlashCardContext(Types::TimeString&& created,
                               const Types::ID&    id,
-                              const Types::ID&    deckID)
+                              const Types::ID&    deckID) noexcept
         : Created(std::move(created))
         , ID(id)
         , DeckID(deckID) {}
@@ -33,7 +33,7 @@ struct FlashCardRecord final {
     FlashCardRecord& operator=(FlashCardRecord&&) noexcept = delete;
 
     explicit FlashCardRecord(struct FlashCardContext&& flashCardContext,
-                             struct FlashCard&&        flashCard)
+                             struct FlashCard&&        flashCard) noexcept
         : FlashCardContext(std::move(flashCardContext))
         , FlashCard(std::move(flashCard)) {}
 };
