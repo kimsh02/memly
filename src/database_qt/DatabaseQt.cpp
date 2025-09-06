@@ -23,22 +23,6 @@ void DatabaseQt::exec(const char* sql) const {
     if (!query.exec(sql)) { throw std::runtime_error(query.lastError().text().toStdString()); }
 }
 
-// void DatabaseQt::ExecuteNonQuery(QSqlQuery& query) const {
-//     if (!query.exec()) { throw std::runtime_error(query.lastError().text().toStdString()); }
-// }
-
-// QSqlQuery DatabaseQt::ExecuteQuery(const char* sql) const {
-//     QSqlQuery query(m_Db);
-//     if (!query.exec(sql)) { throw std::runtime_error(query.lastError().text().toStdString()); }
-//     if (!query.next()) { throw std::runtime_error("Query returned no rows"); }
-//     return query;
-// }
-
-// void DatabaseQt::ExecuteQuery(QSqlQuery& query) const {
-//     if (!query.exec()) { throw std::runtime_error(query.lastError().text().toStdString()); }
-//     if (!query.next()) { throw std::runtime_error("Query returned no rows"); }
-// }
-
 [[nodiscard]] DatabaseQt::Stmt DatabaseQt::Prepare(const char* sql) const {
     QSqlQuery query(m_Db);
     if (!query.prepare(sql)) { throw std::runtime_error(query.lastError().text().toStdString()); }
