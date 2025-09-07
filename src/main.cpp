@@ -89,33 +89,5 @@ int main(int argc, char* argv[]) {
         reply1->deleteLater();
     });
 
-    QUrl      url2("https://translate.google.com/translate_tts");
-    QUrlQuery q2;
-    q2.addQueryItem("ie", "UTF-8");
-    q2.addQueryItem("client", "tw-ob");
-    q2.addQueryItem("tl", "en");         // target language
-    q2.addQueryItem("q", "Hello world"); // text to speak
-    q2.addQueryItem("ttsspeed", "0.5");
-    url2.setQuery(q2);
-
-    QNetworkRequest req2(url2);
-    QNetworkReply*  reply2 = nam.get(req2);
-
-    QObject::connect(reply2, &QNetworkReply::finished, [reply2]() {
-        if (reply2->error() != QNetworkReply::NoError) {
-            qWarning() << "Network error:" << reply2->errorString();
-        } else {
-            QFile outFile("speech_slow.mp3");
-            if (!outFile.open(QIODevice::WriteOnly)) {
-                qWarning() << "Failed to open file speech_slow.mp3 for writing";
-            } else {
-                outFile.write(reply2->readAll());
-                outFile.close();
-                qDebug() << "Saved to speech_slow.mp3";
-            }
-        }
-        reply2->deleteLater();
-    });
-
     return app.exec();
 }
