@@ -1,9 +1,19 @@
 #pragma once
 
-#include <qsqlquery.h>
+#include <expected>
 
 #include "database_qt/DatabaseQt.hpp"
 #include "database_qt/SettingsRecord.hpp"
+#include "services/LanguageTranslator.hpp"
+
+enum class SettingsField { Name };
+
+struct SettingsValidationError {
+    SettingsField Field;
+    QString       Message;
+};
+
+using VResult = std::expected<void, std::vector<SettingsValidationError>>;
 
 class SettingsStore final {
 public:
@@ -15,30 +25,49 @@ public:
 
     [[nodiscard]] const Settings* Read() const noexcept { return &m_SettingsRecord.Settings; }
 
-    [[nodiscard]] bool Update(Settings&& settings);
+    [[nodiscard]] VResult Update(Settings&& settings);
 
     explicit SettingsStore(const DatabaseQt& databaseQt) noexcept
         : m_DatabaseQt(databaseQt)
         , m_SettingsRecord(initSettingsRecord()) {}
 
 private:
-    static constexpr std::size_t s_DefaultTargetLanguageIndex = 9;
-    static constexpr std::size_t s_UserID                     = 1;
+    struct Default {
+        inline static constexpr std::size_t s_TargetLangIdx = 9;
+        inline static constexpr std::size_t s_UserID        = 1;
+    };
 
-    static constexpr auto s_ReadSettingsSQL = R"(
-        SELECT * FROM settings WHERE id = 1 LIMIT 1;)";
+    struct SQL {
+        inline static constexpr auto s_ReadSettingsSQL = R"(
+            SELECT * FROM settings WHERE id = ? LIMIT 1;)";
 
-    static constexpr auto s_UpdateSettingsSQL = R"(
-        UPDATE settings
-        SET language = ?, theme = ?, notifications = ?
-        WHERE id = 1;)";
+        inline static constexpr auto s_UpdateSettingsSQL = R"(
+            UPDATE settings
+            SET target_lang_idx = ?, name = ?
+            WHERE id = ?;)";
+
+        inline static constexpr auto s_UpsertSettingsSQL = R"(
+            INSERT INTO settings(id, target_lang_idx, name)
+            VALUES(?, ?, ?)
+            ON CONFLICT(id) DO NOTHING;)";
+    };
+
+    struct Limit {
+        inline static constexpr std::size_t s_LANG_COUNT   = LanguageTranslator::LangCount();
+        inline static constexpr std::size_t s_MAX_NAME_LEN = 80;
+    };
 
     const DatabaseQt& m_DatabaseQt;
 
-    DatabaseQt::Stmt m_ReadStmt   = m_DatabaseQt.Prepare(s_ReadSettingsSQL);
-    DatabaseQt::Stmt m_UpdateStmt = m_DatabaseQt.Prepare(s_UpdateSettingsSQL);
+    DatabaseQt::Stmt m_ReadStmt   = m_DatabaseQt.Prepare(SQL::s_ReadSettingsSQL);
+    DatabaseQt::Stmt m_UpdateStmt = m_DatabaseQt.Prepare(SQL::s_UpdateSettingsSQL);
 
     SettingsRecord m_SettingsRecord;
 
     SettingsRecord initSettingsRecord();
+
+    SettingsRecord dbReadSettings();
+
+    void                  validateSystemFields(SettingsRecord& settingsRecord);
+    [[nodiscard]] VResult validateUserFields(Settings& settings) const;
 };

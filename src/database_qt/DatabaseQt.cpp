@@ -31,9 +31,9 @@ void DatabaseQt::exec(const char* sql) const {
 
 void DatabaseQt::ensureSchema() const {
     exec(R"(CREATE TABLE IF NOT EXISTS settings (
-        id                     INTEGER PRIMARY KEY,
-        target_language_index  INTEGER NOT NULL,
-        name                   TEXT
+        id               INTEGER PRIMARY KEY,
+        target_lang_idx  INTEGER NOT NULL,
+        name             TEXT
     );)");
     exec(R"(CREATE TABLE IF NOT EXISTS decks (
         id             INTEGER PRIMARY KEY,
@@ -65,28 +65,28 @@ void DatabaseQt::ensureSchema() const {
     );)");
 }
 
-template <class... Ts>
-DatabaseQt::Stmt& DatabaseQt::Stmt::Bind(Ts&&... args) {
-    auto toVar = [](auto&& x) -> QVariant {
-        using U = std::decay_t<decltype(x)>;
-        if constexpr (std::is_same_v<U, QString>)
-            return QVariant(std::forward<decltype(x)>(x));
-        else if constexpr (std::is_same_v<U, const char*> || std::is_same_v<U, char*>)
-            return QVariant(QString::fromUtf8(x));
-        else if constexpr (std::is_array_v<U> && std::is_same_v<std::remove_extent_t<U>, char>)
-            return QVariant(QString::fromUtf8(x));
-        else if constexpr (std::is_same_v<U, std::string>)
-            return QVariant(QString::fromUtf8(x.c_str(), int(x.size())));
-        else if constexpr (std::is_same_v<U, int> || std::is_same_v<U, double>)
-            return QVariant(x);
-        else if constexpr (std::is_same_v<U, size_t>)
-            return QVariant(qulonglong(x));
-        else
-            return QVariant::fromValue(std::forward<decltype(x)>(x));
-    };
-    (m_Query.addBindValue(toVar(std::forward<Ts>(args))), ...);
-    return *this;
-}
+// template <class... Ts>
+// DatabaseQt::Stmt& DatabaseQt::Stmt::Bind(Ts&&... args) {
+//     auto toVar = [](auto&& x) -> QVariant {
+//         using U = std::decay_t<decltype(x)>;
+//         if constexpr (std::is_same_v<U, QString>)
+//             return QVariant(std::forward<decltype(x)>(x));
+//         else if constexpr (std::is_same_v<U, const char*> || std::is_same_v<U, char*>)
+//             return QVariant(QString::fromUtf8(x));
+//         else if constexpr (std::is_array_v<U> && std::is_same_v<std::remove_extent_t<U>, char>)
+//             return QVariant(QString::fromUtf8(x));
+//         else if constexpr (std::is_same_v<U, std::string>)
+//             return QVariant(QString::fromUtf8(x.c_str(), int(x.size())));
+//         else if constexpr (std::is_same_v<U, int> || std::is_same_v<U, double>)
+//             return QVariant(x);
+//         else if constexpr (std::is_same_v<U, size_t>)
+//             return QVariant(qulonglong(x));
+//         else
+//             return QVariant::fromValue(std::forward<decltype(x)>(x));
+//     };
+//     (m_Query.addBindValue(toVar(std::forward<Ts>(args))), ...);
+//     return *this;
+// }
 
 void DatabaseQt::Stmt::Exec() {
     if (!m_Query.exec()) { throw std::runtime_error(m_Query.lastError().text().toStdString()); }

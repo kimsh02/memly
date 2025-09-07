@@ -27,6 +27,8 @@ public:
 
     void SetTargetIndex(std::size_t index) noexcept;
 
+    static constexpr std::size_t LangCount() noexcept { return s_LatinLangCodes.size(); }
+
 private:
     inline static constexpr std::array<std::string_view, 60> s_LatinLangCodes = {
         "af",  "sq", "eu", "bs", "ca",  "hr", "cs", "da", "nl", "en", "et",  "fil",
