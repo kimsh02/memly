@@ -22,7 +22,7 @@ public:
         Stmt(const Stmt&)            = delete;
         Stmt& operator=(const Stmt&) = delete;
 
-        Stmt(Stmt&&) noexcept            = default;
+        Stmt(Stmt&&) noexcept            = delete;
         Stmt& operator=(Stmt&&) noexcept = delete;
 
         template <class... Ts>
