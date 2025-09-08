@@ -25,28 +25,24 @@ public:
         Stmt(Stmt&&) noexcept            = delete;
         Stmt& operator=(Stmt&&) noexcept = delete;
 
+        // template <class T>
+        // static inline QVariant ToVariant(T&& v) {
+        //     return QVariant::fromValue(std::forward<T>(v));
+        // }
+
+        // static inline QVariant ToVariant(const char* s) { return QVariant(QString::fromUtf8(s)); }
+
+        // template <std::size_t N>
+        // static inline QVariant ToVariant(const char (&s)[N]) {
+        //     return QVariant(QString::fromUtf8(s, N ? (N - 1) : 0));
+        // }
+
+        // static inline QVariant ToVariant(int v) { return QVariant(v); }
+
         template <class... Ts>
-        Stmt&& Bind(Ts&&... args) {
-            auto toVar = [](auto&& x) -> QVariant {
-                using U = std::decay_t<decltype(x)>;
-                if constexpr (std::is_same_v<U, QString>)
-                    return QVariant(std::forward<decltype(x)>(x));
-                else if constexpr (std::is_same_v<U, const char*> || std::is_same_v<U, char*>)
-                    return QVariant(QString::fromUtf8(x));
-                else if constexpr (std::is_array_v<U> &&
-                                   std::is_same_v<std::remove_extent_t<U>, char>)
-                    return QVariant(QString::fromUtf8(x));
-                else if constexpr (std::is_same_v<U, std::string>)
-                    return QVariant(QString::fromUtf8(x.c_str(), int(x.size())));
-                else if constexpr (std::is_same_v<U, int> || std::is_same_v<U, double>)
-                    return QVariant(x);
-                else if constexpr (std::is_same_v<U, size_t>)
-                    return QVariant(qulonglong(x));
-                else
-                    return QVariant::fromValue(std::forward<decltype(x)>(x));
-            };
-            (m_Query.addBindValue(toVar(std::forward<Ts>(args))), ...);
-            return std::move(*this);
+        Stmt& Bind(Ts&&... args) {
+            (m_Query.addBindValue(toVariant(std::forward<Ts>(args))), ...);
+            return *this;
         }
 
         void Exec();
@@ -69,6 +65,10 @@ public:
 
         explicit Stmt(QSqlQuery&& q)
             : m_Query(std::move(q)) {}
+
+        static QVariant toVariant(const std::string& s) { return QVariant(QString(s.c_str())); }
+
+        static QVariant toVariant(std::size_t v) { return QVariant(qulonglong(v)); }
     };
 
     [[nodiscard]] Stmt Prepare(const char* sql) const;

@@ -10,10 +10,20 @@ enum class SettingsField { Name };
 
 struct SettingsValidationError {
     SettingsField Field;
-    QString       Message;
+    std::string   Message;
+
+    SettingsValidationError(const SettingsValidationError&)            = delete;
+    SettingsValidationError& operator=(const SettingsValidationError&) = delete;
+
+    SettingsValidationError(SettingsValidationError&&) noexcept            = default;
+    SettingsValidationError& operator=(SettingsValidationError&&) noexcept = delete;
+
+    SettingsValidationError(SettingsField field, std::string&& message)
+        : Field(field)
+        , Message(std::move(message)) {}
 };
 
-using VResult = std::expected<void, std::vector<SettingsValidationError>>;
+using UVResult = std::expected<void, std::vector<SettingsValidationError>>;
 
 class SettingsStore final {
 public:
@@ -25,7 +35,7 @@ public:
 
     [[nodiscard]] const Settings* Read() const noexcept { return &m_SettingsRecord.Settings; }
 
-    [[nodiscard]] VResult Update(Settings&& settings);
+    [[nodiscard]] UVResult Update(Settings&& settings);
 
     explicit SettingsStore(const DatabaseQt& databaseQt) noexcept
         : m_DatabaseQt(databaseQt)
@@ -68,6 +78,8 @@ private:
 
     SettingsRecord dbReadSettings();
 
-    void                  validateSystemFields(SettingsRecord& settingsRecord);
-    [[nodiscard]] VResult validateUserFields(Settings& settings) const;
+    using SVResult = std::expected<void, std::string>;
+
+    [[nodiscard]] SVResult validateSystemFields(const SettingsRecord& settingsRecord) const;
+    [[nodiscard]] UVResult validateUserFields(const Settings& settings) const;
 };
