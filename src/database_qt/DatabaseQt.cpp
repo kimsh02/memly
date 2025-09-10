@@ -63,52 +63,23 @@ void DatabaseQt::ensureSchema() const {
         FOREIGN KEY(deck_id) REFERENCES decks(id) ON DELETE CASCADE
     );)");
 
-    // // Maintain decks.card_count via triggers (SQLite disallows subqueries in generated columns)
-    // exec(R"(CREATE TRIGGER IF NOT EXISTS trg_cards_insert AFTER INSERT ON cards
-    // BEGIN
-    //   UPDATE decks SET card_count = card_count + 1 WHERE id = NEW.deck_id;
-    // END;)");
+    // Maintain decks.card_count via triggers (SQLite disallows subqueries in generated columns)
+    exec(R"(CREATE TRIGGER IF NOT EXISTS trg_cards_insert AFTER INSERT ON cards
+    BEGIN
+      UPDATE decks SET card_count = card_count + 1 WHERE id = NEW.deck_id;
+    END;)");
 
-    // exec(R"(CREATE TRIGGER IF NOT EXISTS trg_cards_delete AFTER DELETE ON cards
-    // BEGIN
-    //   UPDATE decks SET card_count = card_count - 1 WHERE id = OLD.deck_id;
-    // END;)");
+    exec(R"(CREATE TRIGGER IF NOT EXISTS trg_cards_delete AFTER DELETE ON cards
+    BEGIN
+      UPDATE decks SET card_count = card_count - 1 WHERE id = OLD.deck_id;
+    END;)");
 
-    // exec(R"(CREATE TRIGGER IF NOT EXISTS trg_cards_update_deck AFTER UPDATE OF deck_id ON cards
-    // BEGIN
-    //   UPDATE decks SET card_count = card_count - 1 WHERE id = OLD.deck_id;
-    //   UPDATE decks SET card_count = card_count + 1 WHERE id = NEW.deck_id;
-    // END;)");
-
-    // // Backfill counts in case table existed before triggers
-    // exec(R"(UPDATE decks
-    //         SET card_count = COALESCE((
-    //             SELECT COUNT(*) FROM cards WHERE cards.deck_id = decks.id
-    //         ), 0);)");
+    exec(R"(CREATE TRIGGER IF NOT EXISTS trg_cards_update_deck AFTER UPDATE OF deck_id ON cards
+    BEGIN
+      UPDATE decks SET card_count = card_count - 1 WHERE id = OLD.deck_id;
+      UPDATE decks SET card_count = card_count + 1 WHERE id = NEW.deck_id;
+    END;)");
 }
-
-// template <class... Ts>
-// DatabaseQt::Stmt& DatabaseQt::Stmt::Bind(Ts&&... args) {
-//     auto toVar = [](auto&& x) -> QVariant {
-//         using U = std::decay_t<decltype(x)>;
-//         if constexpr (std::is_same_v<U, QString>)
-//             return QVariant(std::forward<decltype(x)>(x));
-//         else if constexpr (std::is_same_v<U, const char*> || std::is_same_v<U, char*>)
-//             return QVariant(QString::fromUtf8(x));
-//         else if constexpr (std::is_array_v<U> && std::is_same_v<std::remove_extent_t<U>, char>)
-//             return QVariant(QString::fromUtf8(x));
-//         else if constexpr (std::is_same_v<U, std::string>)
-//             return QVariant(QString::fromUtf8(x.c_str(), int(x.size())));
-//         else if constexpr (std::is_same_v<U, int> || std::is_same_v<U, double>)
-//             return QVariant(x);
-//         else if constexpr (std::is_same_v<U, size_t>)
-//             return QVariant(qulonglong(x));
-//         else
-//             return QVariant::fromValue(std::forward<decltype(x)>(x));
-//     };
-//     (m_Query.addBindValue(toVar(std::forward<Ts>(args))), ...);
-//     return *this;
-// }
 
 void DatabaseQt::Stmt::Exec() {
     if (!m_Query.exec()) { Fatal(m_Query.lastError().text().toStdString()); }

@@ -33,7 +33,10 @@ public:
     SettingsStore(SettingsStore&&) noexcept            = delete;
     SettingsStore& operator=(SettingsStore&&) noexcept = delete;
 
-    [[nodiscard]] const Settings* Read() const noexcept { return &m_SettingsRecord.Settings; }
+    [[nodiscard]] const Settings* Read() {
+        m_SettingsRecord = dbReadSettings();
+        return &m_SettingsRecord.Settings;
+    }
 
     [[nodiscard]] UVResult Update(Settings&& settings);
 

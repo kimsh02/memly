@@ -10,7 +10,7 @@ struct Deck final {
     Deck& operator=(const Deck&) noexcept = delete;
 
     Deck(Deck&&)                     = default;
-    Deck& operator=(Deck&&) noexcept = delete;
+    Deck& operator=(Deck&&) noexcept = default;
 
     explicit Deck(std::string&& name, std::size_t cardCount) noexcept
         : Name(std::move(name))

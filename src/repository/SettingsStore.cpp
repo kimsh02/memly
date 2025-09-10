@@ -56,6 +56,5 @@ SettingsStore::validateSystemFields(const SettingsRecord& settingsRecord) const 
                       Default::s_UserID);
     m_UpdateStmt.Exec();
     m_UpdateStmt.Finish();
-    m_SettingsRecord = dbReadSettings();
     return UVResult{};
 }

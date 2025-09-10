@@ -8,14 +8,14 @@
 
 class CardStore final {
 public:
-    [[nodiscard]] Types::ID Create(FlashCard&& card);
+    [[nodiscard]] std::size_t Create(FlashCard&& card);
 
     // Non-owning pointer invalidated IFF FlashCard is deleted from m_Cards
-    [[nodiscard]] const FlashCard* Read(const Types::ID& cardID) const noexcept;
+    [[nodiscard]] const FlashCard* Read(std::size_t cardID) const noexcept;
 
-    [[nodiscard]] bool Update(const Types::ID& cardID, FlashCard&& card);
+    [[nodiscard]] bool Update(std::size_t cardID, FlashCard&& card);
 
-    [[nodiscard]] bool Delete(const Types::ID& cardID) noexcept;
+    [[nodiscard]] bool Delete(std::size_t cardID) noexcept;
 
     CardStore(const CardStore&)            = delete;
     CardStore& operator=(const CardStore&) = delete;
@@ -26,12 +26,12 @@ public:
     CardStore();
 
 private:
-    std::unordered_map<Types::ID, FlashCardRecord> m_Cards;
+    std::unordered_map<std::size_t, FlashCardRecord> m_Cards;
 
     static bool        validateTimeString(const Types::TimeString& timeString);
     static bool        validatePathString(const Types::PathString& pathString);
     static bool        validateCardContent(const CardContent& cardContent);
     static std::string currentTime(void);
 
-    bool validateDuplicate(const CardContent& cardContent, const Types::ID& deckID);
+    bool validateDuplicate(const CardContent& cardContent, std::size_t deckID);
 };

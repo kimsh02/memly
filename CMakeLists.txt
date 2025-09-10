@@ -1,10 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
 project(repetition-ai LANGUAGES C CXX)
 
-if(APPLE AND NOT TARGET atomic)
-  add_library(atomic INTERFACE)
-endif()
-
 # Prefer config packages (vcpkg)
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG ON)
 
@@ -18,8 +14,6 @@ find_package(Qt6 REQUIRED COMPONENTS Quick Qml Network Core Sql)
 
 find_package(google_cloud_cpp_translate REQUIRED CONFIG)
 find_package(google_cloud_cpp_texttospeech REQUIRED CONFIG)
-
-find_package(Boost REQUIRED CONFIG COMPONENTS uuid)
 
 # ------------------------ Sources ------------------------------
 # Root main
@@ -100,7 +94,6 @@ target_compile_options(repetition-ai PRIVATE -Wall -Wextra -Wunused -pedantic -W
 # ------------------------ Link ----------------------------
 target_link_libraries(repetition-ai PRIVATE
   Qt6::Quick Qt6::Qml Qt6::Network Qt6::Core Qt6::Sql
-  Boost::uuid
   google-cloud-cpp::translate
   google-cloud-cpp::texttospeech
 )
