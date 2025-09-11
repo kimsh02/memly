@@ -1,29 +1,9 @@
 #pragma once
 
-#include <expected>
-
+#include "common/Types.hpp"
 #include "database_qt/DatabaseQt.hpp"
 #include "database_qt/SettingsRecord.hpp"
 #include "services/LanguageTranslator.hpp"
-
-enum class SettingsField { Name };
-
-struct SettingsValidationError {
-    SettingsField Field;
-    std::string   Message;
-
-    SettingsValidationError(const SettingsValidationError&)            = delete;
-    SettingsValidationError& operator=(const SettingsValidationError&) = delete;
-
-    SettingsValidationError(SettingsValidationError&&) noexcept            = default;
-    SettingsValidationError& operator=(SettingsValidationError&&) noexcept = delete;
-
-    SettingsValidationError(SettingsField field, std::string&& message)
-        : Field(field)
-        , Message(std::move(message)) {}
-};
-
-using UVResult = std::expected<void, std::vector<SettingsValidationError>>;
 
 class SettingsStore final {
 public:
@@ -33,15 +13,16 @@ public:
     SettingsStore(SettingsStore&&) noexcept            = delete;
     SettingsStore& operator=(SettingsStore&&) noexcept = delete;
 
-    [[nodiscard]] const Settings* Read() {
-        m_SettingsRecord = dbReadSettings();
-        return &m_SettingsRecord.Settings;
-    }
+    [[nodiscard]] const Settings* Read() { return &m_SettingsRecord.Settings; }
+
+    enum class UserField { Name };
+
+    using UVResult = Types::VResult<UserField>;
 
     [[nodiscard]] UVResult Update(Settings&& settings);
 
-    explicit SettingsStore(const DatabaseQt& databaseQt) noexcept
-        : m_DatabaseQt(databaseQt)
+    explicit SettingsStore(const DatabaseQt& db)
+        : m_Db(db)
         , m_SettingsRecord(initSettingsRecord()) {}
 
 private:
@@ -51,15 +32,15 @@ private:
     };
 
     struct SQL {
-        inline static constexpr auto s_ReadSettingsSQL = R"(
+        inline static constexpr auto s_ReadSQL = R"(
             SELECT * FROM settings WHERE id = ? LIMIT 1;)";
 
-        inline static constexpr auto s_UpdateSettingsSQL = R"(
+        inline static constexpr auto s_UpdateSQL = R"(
             UPDATE settings
             SET target_lang_idx = ?, name = ?
             WHERE id = ?;)";
 
-        inline static constexpr auto s_UpsertSettingsSQL = R"(
+        inline static constexpr auto s_UpsertSQL = R"(
             INSERT INTO settings(id, target_lang_idx, name)
             VALUES(?, ?, ?)
             ON CONFLICT(id) DO NOTHING;)";
@@ -70,18 +51,20 @@ private:
         inline static constexpr std::size_t s_MAX_NAME_LEN = 80;
     };
 
-    const DatabaseQt& m_DatabaseQt;
+    const DatabaseQt& m_Db;
 
-    DatabaseQt::Stmt m_ReadStmt   = m_DatabaseQt.Prepare(SQL::s_ReadSettingsSQL);
-    DatabaseQt::Stmt m_UpdateStmt = m_DatabaseQt.Prepare(SQL::s_UpdateSettingsSQL);
+    DatabaseQt::Stmt m_ReadStmt   = m_Db.Prepare(SQL::s_ReadSQL);
+    DatabaseQt::Stmt m_UpdateStmt = m_Db.Prepare(SQL::s_UpdateSQL);
 
     SettingsRecord m_SettingsRecord;
 
     SettingsRecord initSettingsRecord();
 
-    SettingsRecord dbReadSettings();
+    SettingsRecord dbRead();
 
-    using SVResult = std::expected<void, std::string>;
+    enum class SystemField { ID, LangIdx };
+
+    using SVResult = Types::VResult<SystemField>;
 
     [[nodiscard]] SVResult validateSystemFields(const SettingsRecord& settingsRecord) const;
     [[nodiscard]] UVResult validateUserFields(const Settings& settings) const;

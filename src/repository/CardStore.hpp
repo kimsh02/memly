@@ -10,7 +10,6 @@ class CardStore final {
 public:
     [[nodiscard]] std::size_t Create(FlashCard&& card);
 
-    // Non-owning pointer invalidated IFF FlashCard is deleted from m_Cards
     [[nodiscard]] const FlashCard* Read(std::size_t cardID) const noexcept;
 
     [[nodiscard]] bool Update(std::size_t cardID, FlashCard&& card);
