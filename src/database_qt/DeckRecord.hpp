@@ -3,8 +3,6 @@
 #include "models/Deck.hpp"
 
 struct DeckRecordContext {
-    std::size_t ID;
-
     DeckRecordContext(const DeckRecordContext&)            = delete;
     DeckRecordContext& operator=(const DeckRecordContext&) = delete;
 
@@ -12,7 +10,12 @@ struct DeckRecordContext {
     DeckRecordContext& operator=(DeckRecordContext&&) noexcept = default;
 
     explicit DeckRecordContext(std::size_t id) noexcept
-        : ID(id) {}
+        : m_ConstID(id) {}
+
+    std::size_t ID() const noexcept { return m_ConstID; }
+
+private:
+    std::size_t m_ConstID;
 };
 
 struct DeckRecord final {

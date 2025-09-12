@@ -12,6 +12,8 @@ using OptionalPathString = std::optional<PathString>;
 using TimeString         = std::string; // std::chrono::system_clock::time_point
 using OptionalTimeString = std::optional<TimeString>;
 
+using IDVector = std::vector<std::size_t>;
+
 template <typename FieldType>
     requires std::is_enum_v<FieldType>
 struct ValidationError {

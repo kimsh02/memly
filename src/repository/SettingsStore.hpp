@@ -13,7 +13,7 @@ public:
     SettingsStore(SettingsStore&&) noexcept            = delete;
     SettingsStore& operator=(SettingsStore&&) noexcept = delete;
 
-    [[nodiscard]] const Settings* Read() { return &m_SettingsRecord.Settings; }
+    [[nodiscard]] const Settings* Read() const noexcept { return &m_SettingsRecord.Settings; }
 
     enum class UserField { Name };
 
@@ -32,14 +32,12 @@ private:
     };
 
     struct SQL {
-        inline static constexpr auto s_ReadSQL = R"(
+        inline static constexpr auto s_ReadSQL   = R"(
             SELECT * FROM settings WHERE id = ? LIMIT 1;)";
-
         inline static constexpr auto s_UpdateSQL = R"(
             UPDATE settings
             SET target_lang_idx = ?, name = ?
             WHERE id = ?;)";
-
         inline static constexpr auto s_UpsertSQL = R"(
             INSERT INTO settings(id, target_lang_idx, name)
             VALUES(?, ?, ?)

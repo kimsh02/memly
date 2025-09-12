@@ -63,7 +63,7 @@ public:
 
         QSqlQuery m_Query;
 
-        explicit Stmt(QSqlQuery&& q)
+        explicit Stmt(QSqlQuery&& q) noexcept
             : m_Query(std::move(q)) {}
 
         static QVariant toVariant(const std::string& s) { return QVariant(QString(s.c_str())); }
