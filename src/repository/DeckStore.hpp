@@ -16,9 +16,7 @@ public:
     DeckStore(DeckStore&&) noexcept            = delete;
     DeckStore& operator=(DeckStore&&) noexcept = delete;
 
-    explicit DeckStore(const DatabaseQt& db, CardStore& cs) noexcept
-        : m_Db(db)
-        , m_CardStore(cs) {}
+    explicit DeckStore(const DatabaseQt& db, CardStore& cs) noexcept;
 
     enum class UserField { Name };
 

@@ -2,14 +2,14 @@
 
 #include "models/Deck.hpp"
 
-struct DeckRecordContext {
-    DeckRecordContext(const DeckRecordContext&)            = delete;
-    DeckRecordContext& operator=(const DeckRecordContext&) = delete;
+struct DeckContext {
+    DeckContext(const DeckContext&)            = delete;
+    DeckContext& operator=(const DeckContext&) = delete;
 
-    DeckRecordContext(DeckRecordContext&&) noexcept            = default;
-    DeckRecordContext& operator=(DeckRecordContext&&) noexcept = default;
+    DeckContext(DeckContext&&) noexcept            = default;
+    DeckContext& operator=(DeckContext&&) noexcept = default;
 
-    explicit DeckRecordContext(std::size_t id) noexcept
+    explicit DeckContext(std::size_t id) noexcept
         : m_ConstID(id) {}
 
     std::size_t ID() const noexcept { return m_ConstID; }
@@ -19,8 +19,8 @@ private:
 };
 
 struct DeckRecord final {
-    DeckRecordContext DeckRecordContext;
-    Deck              Deck;
+    DeckContext DeckContext;
+    Deck        Deck;
 
     DeckRecord(const DeckRecord&)            = delete;
     DeckRecord& operator=(const DeckRecord&) = delete;
@@ -28,7 +28,7 @@ struct DeckRecord final {
     DeckRecord(DeckRecord&&) noexcept            = default;
     DeckRecord& operator=(DeckRecord&&) noexcept = default;
 
-    explicit DeckRecord(struct DeckRecordContext&& deckRecordContext, struct Deck&& deck) noexcept
-        : DeckRecordContext(std::move(deckRecordContext))
+    explicit DeckRecord(struct DeckContext&& deckContext, struct Deck&& deck) noexcept
+        : DeckContext(std::move(deckContext))
         , Deck(std::move(deck)) {}
 };
