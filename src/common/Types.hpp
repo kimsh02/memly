@@ -44,7 +44,7 @@ inline std::string VResultToString(const VResult<FieldType>& res) {
     const ValidationErrors<FieldType>& errors = res.error();
     for (std::size_t i = 0; i < errors.size(); i++) {
         out.append(errors.at(i).Message);
-        if (out < errors.size() - 1) out.append(", ");
+        if (i < errors.size() - 1) out.append(", ");
     }
     return out;
 }

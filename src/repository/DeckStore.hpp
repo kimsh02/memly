@@ -18,15 +18,15 @@ public:
 
     explicit DeckStore(const DatabaseQt& db, CardStore& cs) noexcept;
 
-    enum class UserField { Name };
+    enum class InfoField { Name };
 
-    using UVResult = Types::VResult<UserField>;
+    using IVResult = Types::VResult<InfoField>;
 
     [[nodiscard]] std::size_t Create(Deck&& deck);
 
     [[nodiscard]] const Deck* Read(std::size_t deckID) const noexcept;
 
-    [[nodiscard]] UVResult Update(std::size_t deckID, Deck&& deck);
+    [[nodiscard]] IVResult Update(std::size_t deckID, Deck&& deck);
 
     [[nodiscard]] bool Delete(std::size_t deckID) noexcept;
 
@@ -35,7 +35,7 @@ public:
 private:
     struct SQL {
         inline static constexpr auto s_CreateSQL  = R"(
-            INSERT INTO decks(id, name, count)
+            INSERT INTO decks(id, name, card_count)
             VALUES(?, ?, 0);)";
         inline static constexpr auto s_ReadAllSQL = R"(
             SELECT * FROM decks;)";
@@ -64,14 +64,17 @@ private:
 
     std::unordered_map<std::size_t, DeckRecord> m_DeckRecords;
 
-    DeckRecord dbRead();
+    DeckRecord dbRead(DatabaseQt::Stmt& stmt, bool finish);
 
-    enum class SystemFields { ID };
+    enum class StatField { CardCount };
+    enum class ContextField { ID };
 
-    using SVResult = Types::VResult<SystemFields>;
+    using SVResult = Types::VResult<StatField>;
+    using CVResult = Types::VResult<ContextField>;
 
-    [[nodiscard]] SVResult validateSystemFields(const DeckRecord& deckRecord) const;
-    [[nodiscard]] UVResult validateUserFields(const Deck& deck) const;
+    [[nodiscard]] CVResult validateContextFields(const DeckContext& deckContext) const;
+    [[nodiscard]] SVResult validateStatFields(const DeckStats& deckStats) const;
+    [[nodiscard]] IVResult validateInfoFields(const DeckInfo& deckInfo) const;
 
     CardStore& m_CardStore;
 };

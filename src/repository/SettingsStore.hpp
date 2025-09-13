@@ -60,10 +60,14 @@ private:
 
     SettingsRecord dbRead();
 
-    enum class SystemField { ID, LangIdx };
+    enum class AppField { LangIdx };
+    enum class ContextField { ID };
 
-    using SVResult = Types::VResult<SystemField>;
+    using AVResult = Types::VResult<AppField>;
+    using CVResult = Types::VResult<ContextField>;
 
-    [[nodiscard]] SVResult validateSystemFields(const SettingsRecord& settingsRecord) const;
-    [[nodiscard]] UVResult validateUserFields(const Settings& settings) const;
+    // void validate(const SettingsContext&, const AppSettings&, const UserSettings&) const;
+    [[nodiscard]] CVResult validateContextFields(const SettingsContext& settingsContext) const;
+    [[nodiscard]] AVResult validateAppFields(const AppSettings& appSettings) const;
+    [[nodiscard]] UVResult validateUserFields(const UserSettings& userSettings) const;
 };

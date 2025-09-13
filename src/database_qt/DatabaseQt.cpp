@@ -7,11 +7,14 @@ DatabaseQt::DatabaseQt() {
     m_Db = QSqlDatabase::addDatabase("QSQLITE");
     m_Db.setDatabaseName(Paths::DatabaseFile());
 
-    if (!m_Db.open()) { throw std::runtime_error(m_Db.lastError().text().toStdString()); }
+    if (!m_Db.open()) {
+        throw std::runtime_error(m_Db.lastError().text().toStdString());
+    }
 
     exec("PRAGMA user_version=1;");
     exec("PRAGMA foreign_keys=ON;");
     exec("PRAGMA journal_mode=WAL;");
+    exec("PRAGMA synchronous = FULL;");
     exec("PRAGMA optimize;");
 
     ensureSchema();
@@ -21,12 +24,16 @@ DatabaseQt::~DatabaseQt() { m_Db.close(); }
 
 void DatabaseQt::exec(const char* sql) const {
     QSqlQuery query(m_Db);
-    if (!query.exec(sql)) { Fatal(query.lastError().text().toStdString()); }
+    if (!query.exec(sql)) {
+        Fatal(query.lastError().text().toStdString());
+    }
 }
 
 [[nodiscard]] DatabaseQt::Stmt DatabaseQt::Prepare(const char* sql) const {
     QSqlQuery query(m_Db);
-    if (!query.prepare(sql)) { Fatal(query.lastError().text().toStdString()); }
+    if (!query.prepare(sql)) {
+        Fatal(query.lastError().text().toStdString());
+    }
     return Stmt(std::move(query));
 }
 
@@ -36,10 +43,11 @@ void DatabaseQt::ensureSchema() const {
         target_lang_idx  INTEGER NOT NULL,
         name             TEXT
     );)");
+    // TODO: autoincrement
     exec(R"(CREATE TABLE IF NOT EXISTS decks (
         id             INTEGER PRIMARY KEY,
-        name           TEXT NOT NULL UNIQUE,
-        card_count     INTEGER NOT NULL
+        card_count     INTEGER NOT NULL,
+        name           TEXT NOT NULL UNIQUE
     );)");
     exec(R"(CREATE TABLE IF NOT EXISTS cards (
         id             INTEGER PRIMARY KEY,
@@ -82,5 +90,7 @@ void DatabaseQt::ensureSchema() const {
 }
 
 void DatabaseQt::Stmt::Exec() {
-    if (!m_Query.exec()) { Fatal(m_Query.lastError().text().toStdString()); }
+    if (!m_Query.exec()) {
+        Fatal(m_Query.lastError().text().toStdString());
+    }
 }
