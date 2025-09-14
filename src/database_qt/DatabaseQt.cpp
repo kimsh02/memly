@@ -45,7 +45,7 @@ void DatabaseQt::ensureSchema() const {
     );)");
     exec(R"(CREATE TABLE IF NOT EXISTS decks (
         id             INTEGER PRIMARY KEY AUTOINCREMENT,
-        card_count     INTEGER NOT NULL,
+        card_count     INTEGER NOT NULL DEFAULT 0,
         name           TEXT NOT NULL UNIQUE
     );)");
     exec(R"(CREATE TABLE IF NOT EXISTS cards (

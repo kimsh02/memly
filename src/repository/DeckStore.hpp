@@ -22,7 +22,7 @@ public:
 
     using IVResult = Types::VResult<InfoField>;
 
-    [[nodiscard]] std::size_t Create(Deck&& deck);
+    [[nodiscard]] IVResult Create(Deck&& deck);
 
     [[nodiscard]] const Deck* Read(std::size_t deckID) const noexcept;
 
@@ -35,8 +35,8 @@ public:
 private:
     struct SQL {
         inline static constexpr auto s_CreateSQL  = R"(
-            INSERT INTO decks(id, name, card_count)
-            VALUES(?, ?, 0);)";
+            INSERT INTO decks(name)
+            VALUES(?);)";
         inline static constexpr auto s_ReadAllSQL = R"(
             SELECT * FROM decks;)";
         inline static constexpr auto s_ReadSQL    = R"(

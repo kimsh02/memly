@@ -75,3 +75,16 @@ DeckStore::validateContextFields(const DeckContext& deckContext) const {
         return IVResult{};
     return std::unexpected(std::move(v));
 }
+
+[[nodiscard]] DeckStore::IVResult DeckStore::Create(Deck&& deck) {
+    if (auto res = validateInfoFields(deck.DeckInfo); !res) {
+        return res;
+    }
+    m_CreateStmt.Bind(deck.DeckInfo.Name);
+    m_CreateStmt.Exec();
+    std::size_t id = m_CreateStmt.LastInsertID();
+    m_CreateStmt.Finish();
+    m_ReadStmt.Bind(id);
+    m_DeckRecords.emplace(id, dbRead(m_ReadStmt, true));
+    return IVResult{};
+}

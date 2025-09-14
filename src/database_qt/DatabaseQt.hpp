@@ -58,6 +58,10 @@ public:
 
         void Finish() noexcept { m_Query.finish(); }
 
+        [[nodiscard]] std::size_t LastInsertID() const {
+            return m_Query.lastInsertId().toULongLong();
+        }
+
     private:
         friend class DatabaseQt;
 
