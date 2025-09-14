@@ -43,14 +43,13 @@ void DatabaseQt::ensureSchema() const {
         target_lang_idx  INTEGER NOT NULL,
         name             TEXT
     );)");
-    // TODO: autoincrement
     exec(R"(CREATE TABLE IF NOT EXISTS decks (
-        id             INTEGER PRIMARY KEY,
+        id             INTEGER PRIMARY KEY AUTOINCREMENT,
         card_count     INTEGER NOT NULL,
         name           TEXT NOT NULL UNIQUE
     );)");
     exec(R"(CREATE TABLE IF NOT EXISTS cards (
-        id             INTEGER PRIMARY KEY,
+        id             INTEGER PRIMARY KEY AUTOINCREMENT,
         deck_id        INTEGER NOT NULL,
         created        TEXT    NOT NULL,
         last_updated   TEXT,
