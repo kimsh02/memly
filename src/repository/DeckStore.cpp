@@ -88,3 +88,10 @@ DeckStore::validateContextFields(const DeckContext& deckContext) const {
     m_DeckRecords.emplace(id, dbRead(m_ReadStmt, true));
     return IVResult{};
 }
+
+[[nodiscard]] const Deck* DeckStore::Read(std::size_t deckID) const noexcept {
+    if (auto it = m_DeckRecords.find(deckID); it != m_DeckRecords.end()) {
+        return &it->second.Deck;
+    }
+    Fatal(std::format("Invalid deckID: {}", deckID));
+}
