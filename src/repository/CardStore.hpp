@@ -36,5 +36,10 @@ class CardStore final {
     //     static bool        validateCardContent(const CardContent& cardContent);
     //     static std::string currentTime(void);
 
-    //     bool validateDuplicate(const CardContent& cardContent, std::size_t deckID);
+    //     bool validateDuplicate(const CardContent& cardContent, std::size_t
+    //     deckID);
+
+private:
+    friend class DeckStore;
+    void deleteCardsInDeck(std::size_t deckID) noexcept;
 };

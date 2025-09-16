@@ -24,11 +24,11 @@ public:
 
     [[nodiscard]] IVResult Create(Deck&& deck);
 
-    [[nodiscard]] const Deck* Read(std::size_t deckID) const noexcept;
+    [[nodiscard]] const Deck* Read(std::size_t deckID) noexcept;
 
     [[nodiscard]] IVResult Update(std::size_t deckID, Deck&& deck);
 
-    [[nodiscard]] bool Delete(std::size_t deckID) noexcept;
+    void Delete(std::size_t deckID) noexcept;
 
     [[nodiscard]] Types::IDVector GetDeckIDs() const;
 
@@ -62,7 +62,11 @@ private:
     DatabaseQt::Stmt m_UpdateStmt = m_Db.Prepare(SQL::s_UpdateSQL);
     DatabaseQt::Stmt m_DeleteStmt = m_Db.Prepare(SQL::s_DeleteSQL);
 
-    std::unordered_map<std::size_t, DeckRecord> m_DeckRecords;
+    using DeckRecordMap = std::unordered_map<std::size_t, DeckRecord>;
+
+    DeckRecordMap m_DeckRecords;
+
+    [[nodiscard]] DeckRecordMap::iterator getDeckRecordMapIter(std::size_t deckID) noexcept;
 
     DeckRecord dbRead(std::size_t deckID);
 

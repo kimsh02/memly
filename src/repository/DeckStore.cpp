@@ -94,19 +94,13 @@ DeckStore::validateContextFields(const DeckContext& deckContext) const {
     return IVResult{};
 }
 
-[[nodiscard]] const Deck* DeckStore::Read(std::size_t deckID) const noexcept {
-    auto it = m_DeckRecords.find(deckID);
-    if (it == m_DeckRecords.end()) {
-        Fatal(std::format("Invalid deckID: {}", deckID));
-    }
-    return &it->second.Deck;
+[[nodiscard]] const Deck* DeckStore::Read(std::size_t deckID) noexcept {
+    return &getDeckRecordMapIter(deckID)->second.Deck;
 }
 
 [[nodiscard]] DeckStore::IVResult DeckStore::Update(std::size_t deckID, Deck&& deck) {
-    auto it = m_DeckRecords.find(deckID);
-    if (it == m_DeckRecords.end()) {
-        Fatal(std::format("Invalid deckID: {}", deckID));
-    }
+    auto it = getDeckRecordMapIter(deckID);
+
     if (auto res = validateInfoFields(deck.DeckInfo); !res) {
         return res;
     }
@@ -116,4 +110,25 @@ DeckStore::validateContextFields(const DeckContext& deckContext) const {
 
     it->second = dbRead(deckID);
     return IVResult{};
+}
+
+void DeckStore::Delete(std::size_t deckID) noexcept {
+    auto it = getDeckRecordMapIter(deckID);
+
+    m_DeleteStmt.Bind(deckID);
+    m_DeleteStmt.Exec();
+    m_DeleteStmt.Finish();
+
+    m_CardStore.deleteCardsInDeck(deckID);
+
+    m_DeckRecords.erase(it);
+}
+
+[[nodiscard]] DeckStore::DeckRecordMap::iterator
+DeckStore::getDeckRecordMapIter(std::size_t deckID) noexcept {
+    auto it = m_DeckRecords.find(deckID);
+    if (it == m_DeckRecords.end()) {
+        Fatal(std::format("Invalid deckID: {}", deckID));
+    }
+    return it;
 }
