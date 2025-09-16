@@ -13,7 +13,7 @@ public:
     explicit SettingsContext(std::size_t id) noexcept
         : m_ConstID(id) {}
 
-    std::size_t ID() const noexcept { return m_ConstID; }
+    [[nodiscard]] std::size_t ID() const noexcept { return m_ConstID; }
 
 private:
     std::size_t m_ConstID;

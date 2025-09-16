@@ -14,32 +14,37 @@
     return idv;
 }
 
-DeckRecord DeckStore::dbRead(DatabaseQt::Stmt& stmt, bool single) {
-    DeckContext deckContext(stmt.Value(0).toULongLong());
+DeckRecord DeckStore::dbRead(std::size_t deckID) {
+    m_ReadStmt.Bind(deckID);
+    m_ReadStmt.Exec();
+    if (!m_ReadStmt.Next()) {
+        Fatal("ReadStmt.Exec() did not return a row");
+    }
+    DeckContext deckContext(m_ReadStmt.Value(0).toULongLong());
     if (auto res = validateContextFields(deckContext); !res) {
         Fatal(Types::VResultToString(res));
     }
-    DeckStats deckStats(stmt.Value(1).toULongLong());
+    DeckStats deckStats(m_ReadStmt.Value(1).toULongLong());
     if (auto res = validateStatFields(deckStats); !res) {
         Fatal(Types::VResultToString(res));
     }
-    DeckInfo deckInfo(stmt.Value(2).toString().toStdString());
-    if (single)
-        stmt.Finish();
+    DeckInfo deckInfo(m_ReadStmt.Value(2).toString().toStdString());
+    m_ReadStmt.Finish();
     if (auto res = validateInfoFields(deckInfo); !res) {
         Fatal(Types::VResultToString(res));
     }
-    Deck deck(std::move(deckStats), std::move(deckInfo));
-    return DeckRecord(std::move(deckContext), std::move(deck));
+    Deck deck(std::move(deckInfo));
+    return DeckRecord(std::move(deckContext), std::move(deckStats), std::move(deck));
 }
 
 DeckStore::DeckStore(const DatabaseQt& db, CardStore& cs) noexcept
     : m_Db(db)
     , m_CardStore(cs) {
-    auto readAll = db.Prepare(SQL::s_ReadAllSQL);
-    readAll.Exec();
-    while (readAll.Next()) {
-        m_DeckRecords.emplace(readAll.Value(0).toULongLong(), dbRead(readAll, false));
+    auto getIDs = db.Prepare(SQL::s_GetIDsSQL);
+    getIDs.Exec();
+    while (getIDs.Next()) {
+        std::size_t deckID = getIDs.Value(0).toULongLong();
+        m_DeckRecords.emplace(deckID, dbRead(deckID));
     }
 }
 
@@ -56,7 +61,7 @@ DeckStore::validateContextFields(const DeckContext& deckContext) const {
 
 [[nodiscard]] DeckStore::SVResult DeckStore::validateStatFields(const DeckStats& deckStats) const {
     Types::ValidationErrors<StatField> v;
-    if (auto cc = deckStats.CardCount < 0) {
+    if (auto cc = deckStats.CardCount() < 0) {
         v.emplace_back(StatField::CardCount, std::format("Invalid deck card count: {}", cc));
     }
     if (v.empty())
@@ -82,16 +87,33 @@ DeckStore::validateContextFields(const DeckContext& deckContext) const {
     }
     m_CreateStmt.Bind(deck.DeckInfo.Name);
     m_CreateStmt.Exec();
-    std::size_t id = m_CreateStmt.LastInsertID();
+    std::size_t deckID = m_CreateStmt.LastInsertID();
     m_CreateStmt.Finish();
-    m_ReadStmt.Bind(id);
-    m_DeckRecords.emplace(id, dbRead(m_ReadStmt, true));
+
+    m_DeckRecords.emplace(deckID, dbRead(deckID));
     return IVResult{};
 }
 
 [[nodiscard]] const Deck* DeckStore::Read(std::size_t deckID) const noexcept {
-    if (auto it = m_DeckRecords.find(deckID); it != m_DeckRecords.end()) {
-        return &it->second.Deck;
+    auto it = m_DeckRecords.find(deckID);
+    if (it == m_DeckRecords.end()) {
+        Fatal(std::format("Invalid deckID: {}", deckID));
     }
-    Fatal(std::format("Invalid deckID: {}", deckID));
+    return &it->second.Deck;
+}
+
+[[nodiscard]] DeckStore::IVResult DeckStore::Update(std::size_t deckID, Deck&& deck) {
+    auto it = m_DeckRecords.find(deckID);
+    if (it == m_DeckRecords.end()) {
+        Fatal(std::format("Invalid deckID: {}", deckID));
+    }
+    if (auto res = validateInfoFields(deck.DeckInfo); !res) {
+        return res;
+    }
+    m_UpdateStmt.Bind(deck.DeckInfo.Name);
+    m_UpdateStmt.Exec();
+    m_UpdateStmt.Finish();
+
+    it->second = dbRead(deckID);
+    return IVResult{};
 }

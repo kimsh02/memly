@@ -2,19 +2,6 @@
 
 #include <string>
 
-struct DeckStats {
-    std::size_t CardCount;
-
-    DeckStats(const DeckStats&)                     = delete;
-    DeckStats& operator=(const DeckStats&) noexcept = delete;
-
-    DeckStats(DeckStats&&)                     = default;
-    DeckStats& operator=(DeckStats&&) noexcept = default;
-
-    explicit DeckStats(std::size_t cardCount) noexcept
-        : CardCount(cardCount) {}
-};
-
 struct DeckInfo {
     std::string Name;
 
@@ -29,8 +16,7 @@ struct DeckInfo {
 };
 
 struct Deck final {
-    DeckStats DeckStats;
-    DeckInfo  DeckInfo;
+    DeckInfo DeckInfo;
 
     Deck(const Deck&)                     = delete;
     Deck& operator=(const Deck&) noexcept = delete;
@@ -38,7 +24,6 @@ struct Deck final {
     Deck(Deck&&)                     = default;
     Deck& operator=(Deck&&) noexcept = default;
 
-    explicit Deck(struct DeckStats&& deckStats, struct DeckInfo&& deckInfo) noexcept
-        : DeckStats(std::move(deckStats))
-        , DeckInfo(std::move(deckInfo)) {}
+    explicit Deck(struct DeckInfo&& deckInfo) noexcept
+        : DeckInfo(std::move(deckInfo)) {}
 };

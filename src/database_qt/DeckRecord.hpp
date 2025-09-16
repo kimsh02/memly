@@ -12,14 +12,31 @@ struct DeckContext {
     explicit DeckContext(std::size_t id) noexcept
         : m_ConstID(id) {}
 
-    std::size_t ID() const noexcept { return m_ConstID; }
+    [[nodiscard]] std::size_t ID() const noexcept { return m_ConstID; }
 
 private:
     std::size_t m_ConstID;
 };
 
+struct DeckStats {
+    DeckStats(const DeckStats&)                     = delete;
+    DeckStats& operator=(const DeckStats&) noexcept = delete;
+
+    DeckStats(DeckStats&&)                     = default;
+    DeckStats& operator=(DeckStats&&) noexcept = default;
+
+    explicit DeckStats(std::size_t cardCount) noexcept
+        : m_ConstCardCount(cardCount) {}
+
+    [[nodiscard]] std::size_t CardCount() const noexcept { return m_ConstCardCount; }
+
+private:
+    std::size_t m_ConstCardCount;
+};
+
 struct DeckRecord final {
     DeckContext DeckContext;
+    DeckStats   DeckStats;
     Deck        Deck;
 
     DeckRecord(const DeckRecord&)            = delete;
@@ -28,7 +45,10 @@ struct DeckRecord final {
     DeckRecord(DeckRecord&&) noexcept            = default;
     DeckRecord& operator=(DeckRecord&&) noexcept = default;
 
-    explicit DeckRecord(struct DeckContext&& deckContext, struct Deck&& deck) noexcept
+    explicit DeckRecord(struct DeckContext&& deckContext,
+                        struct DeckStats&&   deckStats,
+                        struct Deck&&        deck) noexcept
         : DeckContext(std::move(deckContext))
+        , DeckStats(std::move(deckStats))
         , Deck(std::move(deck)) {}
 };

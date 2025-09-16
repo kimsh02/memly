@@ -78,6 +78,7 @@ SettingsStore::validateUserFields(const UserSettings& userSettings) const {
                       Default::s_UserID);
     m_UpdateStmt.Exec();
     m_UpdateStmt.Finish();
+
     m_SettingsRecord = dbRead();
     return UVResult{};
 }

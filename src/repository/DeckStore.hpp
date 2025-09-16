@@ -34,19 +34,19 @@ public:
 
 private:
     struct SQL {
-        inline static constexpr auto s_CreateSQL  = R"(
+        inline static constexpr auto s_CreateSQL = R"(
             INSERT INTO decks(name)
             VALUES(?);)";
-        inline static constexpr auto s_ReadAllSQL = R"(
-            SELECT * FROM decks;)";
-        inline static constexpr auto s_ReadSQL    = R"(
+        inline static constexpr auto s_GetIDsSQL = R"(
+            SELECT id FROM decks;)";
+        inline static constexpr auto s_ReadSQL   = R"(
             SELECT * FROM decks
             WHERE id = ?;)";
-        inline static constexpr auto s_UpdateSQL  = R"(
+        inline static constexpr auto s_UpdateSQL = R"(
             UPDATE decks
             SET name = ?
             WHERE id = ?;)";
-        inline static constexpr auto s_DeleteSQL  = R"(
+        inline static constexpr auto s_DeleteSQL = R"(
             DELETE FROM decks
             WHERE id = ?;)";
     };
@@ -64,7 +64,7 @@ private:
 
     std::unordered_map<std::size_t, DeckRecord> m_DeckRecords;
 
-    DeckRecord dbRead(DatabaseQt::Stmt& stmt, bool finish);
+    DeckRecord dbRead(std::size_t deckID);
 
     enum class StatField { CardCount };
     enum class ContextField { ID };
