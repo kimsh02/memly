@@ -1,11 +1,13 @@
 #pragma once
 
+#include <string>
 #include <unordered_map>
 #include <unordered_set>
 
 #include "common/Types.hpp"
 #include "database_qt/FlashCardRecord.hpp"
 #include "models/FlashCard.hpp"
+#include "util/Util.hpp"
 
 class CardStore final {
     // public:
@@ -41,5 +43,6 @@ class CardStore final {
 
 private:
     friend class DeckStore;
-    void deleteCardsInDeck(std::size_t deckID) noexcept;
+
+    void deleteCardsInDeck(std::size_t deckID) noexcept { Fatal(std::to_string(deckID)); }
 };
