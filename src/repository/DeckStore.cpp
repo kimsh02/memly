@@ -3,6 +3,7 @@
 #include <expected>
 
 #include "common/Types.hpp"
+#include "repository/CardStore.hpp"
 #include "util/Util.hpp"
 
 [[nodiscard]] Types::IDVector DeckStore::GetDeckIDs() const {

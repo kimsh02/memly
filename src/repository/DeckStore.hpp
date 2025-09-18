@@ -6,7 +6,8 @@
 #include "database_qt/DatabaseQt.hpp"
 #include "database_qt/DeckRecord.hpp"
 #include "models/Deck.hpp"
-#include "repository/CardStore.hpp"
+
+class CardStore;
 
 class DeckStore final {
 public:

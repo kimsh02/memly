@@ -6,6 +6,8 @@
 // #include "common/Types.hpp"
 // #include "models/FlashCard.hpp"
 
+#include "repository/DeckStore.hpp"
+
 // [[nodiscard]] Types::ID CardStore::Create(const Types::ID& deckID, CardContent&& cardContent) {}
 
 // [[nodiscard]] const FlashCard* CardStore::Read(const Types::ID& cardID) const noexcept {

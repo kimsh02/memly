@@ -5,41 +5,50 @@
 #include <unordered_set>
 
 #include "common/Types.hpp"
+#include "database_qt/DatabaseQt.hpp"
 #include "database_qt/FlashCardRecord.hpp"
 #include "models/FlashCard.hpp"
 #include "util/Util.hpp"
 
+class DeckStore;
+
 class CardStore final {
-    // public:
-    //     [[nodiscard]] std::size_t Create(FlashCard&& card);
+public:
+    CardStore(const CardStore&)            = delete;
+    CardStore& operator=(const CardStore&) = delete;
 
-    //     [[nodiscard]] const FlashCard* Read(std::size_t cardID) const noexcept;
+    CardStore(CardStore&&) noexcept            = delete;
+    CardStore& operator=(CardStore&&) noexcept = delete;
 
-    //     [[nodiscard]] bool Update(std::size_t cardID, FlashCard&& card);
+    explicit CardStore(const DatabaseQt& db, DeckStore& ds) noexcept;
 
-    //     [[nodiscard]] bool Delete(std::size_t cardID) noexcept;
+    enum class ContentField { Front, Back, Audio, Image };
 
-    //     CardStore(const CardStore&)            = delete;
-    //     CardStore& operator=(const CardStore&) = delete;
+    using CVResult = Types::VResult<ContentField>;
 
-    //     CardStore(CardStore&&) noexcept            = delete;
-    //     CardStore& operator=(CardStore&&) noexcept = delete;
+    [[nodiscard]] CVResult Create(FlashCard&& card); // Update deck count in memory
 
-    //     CardStore();
+    [[nodiscard]] const FlashCard* Read(std::size_t cardID) noexcept;
 
-    // private:
-    //     // When cardstore inserts card deck card count needs to updated in memory
-    //     std::unordered_map<std::size_t, FlashCardRecord> m_CardRecords;
+    [[nodiscard]] CVResult Update(std::size_t cardID,
+                                  FlashCard&& card); // Update deck count in memory if applicable
 
-    //     std::unordered_map<std::size_t, std::unordered_set<std::size_t>> m_Decks;
+    void Delete(std::size_t cardID) noexcept; // Update deck count in memory
 
-    //     static bool        validateTimeString(const Types::TimeString& timeString);
-    //     static bool        validatePathString(const Types::PathString& pathString);
-    //     static bool        validateCardContent(const CardContent& cardContent);
-    //     static std::string currentTime(void);
+    [[nodiscard]] Types::IDVector GetFlashCardIDsByDeckID(std::size_t deckID) const;
 
-    //     bool validateDuplicate(const CardContent& cardContent, std::size_t
-    //     deckID);
+private:
+    // When cardstore inserts card deck card count needs to updated in memory
+    std::unordered_map<std::size_t, FlashCardRecord> m_CardRecords;
+
+    std::unordered_map<std::size_t, std::unordered_set<std::size_t>> m_Decks;
+
+    static bool        validateTimeString(const Types::TimeString& timeString);
+    static bool        validatePathString(const Types::PathString& pathString);
+    static bool        validateCardContent(const CardContent& cardContent);
+    static std::string currentTime(void);
+
+    bool validateDuplicate(const CardContent& cardContent, std::size_t deckID);
 
 private:
     friend class DeckStore;
