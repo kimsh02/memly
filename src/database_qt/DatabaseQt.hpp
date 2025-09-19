@@ -13,9 +13,11 @@ public:
     DatabaseQt();
     ~DatabaseQt();
 
-    // bool BeginTransaction() const;
-    // bool CommitTransaction() const;
-    // bool RollbackTransaction() const;
+    bool BeginTransaction() { return m_Db.transaction(); }
+
+    bool CommitTransaction() { return m_Db.commit(); }
+
+    bool RollbackTransaction() { return m_Db.rollback(); }
 
     class Stmt {
     public:
