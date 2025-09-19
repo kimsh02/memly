@@ -7,8 +7,6 @@
 #include "database_qt/DeckRecord.hpp"
 #include "models/Deck.hpp"
 
-class CardStore;
-
 class DeckStore final {
 public:
     DeckStore(const DeckStore&)            = delete;
@@ -17,7 +15,7 @@ public:
     DeckStore(DeckStore&&) noexcept            = delete;
     DeckStore& operator=(DeckStore&&) noexcept = delete;
 
-    explicit DeckStore(const DatabaseQt& db, CardStore& cs) noexcept;
+    explicit DeckStore(const DatabaseQt& db) noexcept;
 
     enum class InfoField { Name };
 
@@ -80,6 +78,4 @@ private:
     [[nodiscard]] CVResult validateContextFields(const DeckContext& deckContext) const;
     [[nodiscard]] SVResult validateStatFields(const DeckStats& deckStats) const;
     [[nodiscard]] IVResult validateInfoFields(const DeckInfo& deckInfo) const;
-
-    CardStore& m_CardStore;
 };

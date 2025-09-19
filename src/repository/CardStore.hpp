@@ -10,8 +10,6 @@
 #include "models/FlashCard.hpp"
 #include "util/Util.hpp"
 
-class DeckStore;
-
 class CardStore final {
 public:
     // CardStore(const CardStore&)            = delete;
@@ -20,7 +18,7 @@ public:
     // CardStore(CardStore&&) noexcept            = delete;
     // CardStore& operator=(CardStore&&) noexcept = delete;
 
-    // explicit CardStore(const DatabaseQt& db, DeckStore& ds) noexcept;
+    // explicit CardStore(const DatabaseQt& db) noexcept;
 
     // enum class ContentField { Front, Back, Audio, Image };
 
@@ -35,7 +33,10 @@ public:
 
     // void Delete(std::size_t cardID) noexcept; // Update deck count in memory
 
-    // [[nodiscard]] Types::IDVector GetFlashCardIDsByDeckID(std::size_t deckID) const;
+    // [[nodiscard]] Types::IDVector GetFlashCardIDsByDeckID(std::size_t deckID)
+    // const;
+
+    void DeckDeleteCache(std::size_t deckID) noexcept { Fatal(std::to_string(deckID)); }
 
 private:
     // When cardstore inserts card deck card count needs to updated in memory
@@ -51,7 +52,4 @@ private:
     // bool validateDuplicate(const CardContent& cardContent, std::size_t deckID);
 
 private:
-    friend class DeckStore;
-
-    void deleteCardsInDeck(std::size_t deckID) noexcept { Fatal(std::to_string(deckID)); }
 };

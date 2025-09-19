@@ -20,8 +20,8 @@ int main(int argc, char* argv[]) {
             return EXIT_FAILURE;
         DatabaseQt    db;
         SettingsStore ss(db);
-        CardStore     cs;
-        DeckStore     ds(db, cs);
+        // CardStore     cs;
+        DeckStore ds(db);
         return app.exec();
     } catch (const std::runtime_error& e) {
         qCritical() << "Fatal error: " << e.what();

@@ -38,9 +38,8 @@ DeckRecord DeckStore::dbRead(std::size_t deckID) {
     return DeckRecord(std::move(deckContext), std::move(deckStats), std::move(deck));
 }
 
-DeckStore::DeckStore(const DatabaseQt& db, CardStore& cs) noexcept
-    : m_Db(db)
-    , m_CardStore(cs) {
+DeckStore::DeckStore(const DatabaseQt& db) noexcept
+    : m_Db(db) {
     auto getIDs = db.Prepare(SQL::s_GetIDsSQL);
     getIDs.Exec();
     while (getIDs.Next()) {
@@ -119,8 +118,6 @@ void DeckStore::Delete(std::size_t deckID) noexcept {
     m_DeleteStmt.Bind(deckID);
     m_DeleteStmt.Exec();
     m_DeleteStmt.Finish();
-
-    m_CardStore.deleteCardsInDeck(deckID);
 
     m_DeckRecords.erase(it);
 }
