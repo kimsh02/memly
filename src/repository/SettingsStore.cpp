@@ -29,7 +29,7 @@ SettingsRecord SettingsStore::dbRead() {
 SettingsRecord SettingsStore::initSettingsRecord() {
     DatabaseQt::Stmt upsertStmt = m_Db.Prepare(SQL::s_UpsertSQL);
     upsertStmt.Bind(Default::s_UserID, Default::s_TargetLangIdx, std::string{});
-    upsertStmt.Exec();
+    upsertStmt.ExecImmediate();
     return dbRead();
 }
 
@@ -76,7 +76,7 @@ SettingsStore::validateUserFields(const UserSettings& userSettings) const {
     m_UpdateStmt.Bind(settings.AppSettings.LastTargetLanguageIndex,
                       settings.UserSettings.Name,
                       Default::s_UserID);
-    m_UpdateStmt.Exec();
+    m_UpdateStmt.ExecImmediate();
     m_UpdateStmt.Finish();
 
     m_SettingsRecord = dbRead();

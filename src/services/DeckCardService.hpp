@@ -12,13 +12,16 @@ public:
     DeckCardService(DeckCardService&&) noexcept            = delete;
     DeckCardService& operator=(DeckCardService&&) noexcept = delete;
 
-    DeckCardService(const DatabaseQt& db, const DeckStore& ds, const CardStore& cs) noexcept;
+    DeckCardService(DatabaseQt& db, DeckStore& ds, CardStore& cs) noexcept
+        : m_Db(db)
+        , m_DeckStore(ds)
+        , m_CardStore(cs) {}
 
+    // void CreateCard()
     void DeleteDeck(int deckId); // begins tx, deletes deck, evicts caches
 
 private:
-    const DatabaseQt m_Db;
-
-    DeckStore& m_DeckStore;
-    CardStore& m_CardStore;
+    DatabaseQt& m_Db;
+    DeckStore&  m_DeckStore;
+    CardStore&  m_CardStore;
 };

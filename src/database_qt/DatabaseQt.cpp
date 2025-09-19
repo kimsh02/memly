@@ -93,3 +93,9 @@ void DatabaseQt::Stmt::Exec() {
         Fatal(m_Query.lastError().text().toStdString());
     }
 }
+
+void DatabaseQt::Stmt::ExecImmediate() {
+    if (!m_Query.exec("BEGIN IMMEDIATE")) {
+        Fatal(m_Query.lastError().text().toStdString());
+    }
+}

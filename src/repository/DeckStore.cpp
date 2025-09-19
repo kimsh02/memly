@@ -3,7 +3,6 @@
 #include <expected>
 
 #include "common/Types.hpp"
-#include "repository/CardStore.hpp"
 #include "util/Util.hpp"
 
 [[nodiscard]] Types::IDVector DeckStore::GetDeckIDs() const {
@@ -86,7 +85,7 @@ DeckStore::validateContextFields(const DeckContext& deckContext) const {
         return res;
     }
     m_CreateStmt.Bind(deck.DeckInfo.Name);
-    m_CreateStmt.Exec();
+    m_CreateStmt.ExecImmediate();
     std::size_t deckID = m_CreateStmt.LastInsertID();
     m_CreateStmt.Finish();
 
@@ -105,7 +104,7 @@ DeckStore::validateContextFields(const DeckContext& deckContext) const {
         return res;
     }
     m_UpdateStmt.Bind(deck.DeckInfo.Name);
-    m_UpdateStmt.Exec();
+    m_UpdateStmt.ExecImmediate();
     m_UpdateStmt.Finish();
 
     it->second = dbRead(deckID);
@@ -116,7 +115,7 @@ void DeckStore::Delete(std::size_t deckID) noexcept {
     auto it = getDeckRecordMapIter(deckID);
 
     m_DeleteStmt.Bind(deckID);
-    m_DeleteStmt.Exec();
+    m_DeleteStmt.ExecImmediate();
     m_DeleteStmt.Finish();
 
     m_DeckRecords.erase(it);

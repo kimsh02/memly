@@ -48,6 +48,7 @@ public:
         }
 
         void Exec();
+        void ExecImmediate();
 
         [[nodiscard]] bool Next() noexcept { return m_Query.next(); }
 
