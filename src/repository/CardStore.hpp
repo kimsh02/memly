@@ -33,8 +33,7 @@ public:
 
     // void Delete(std::size_t cardID) noexcept; // Update deck count in memory
 
-    // [[nodiscard]] Types::IDVector GetFlashCardIDsByDeckID(std::size_t deckID)
-    // const;
+    // [[nodiscard]] Types::IDVector GetFlashCardIDsByDeckID(std::size_t deckID) const;
 
     void DeckDeleteCache(std::size_t deckID) noexcept { Fatal(std::to_string(deckID)); }
 
