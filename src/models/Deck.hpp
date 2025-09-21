@@ -11,8 +11,8 @@ struct DeckInfo {
     DeckInfo(DeckInfo&&)                     = default;
     DeckInfo& operator=(DeckInfo&&) noexcept = default;
 
-    explicit DeckInfo(std::string&& name) noexcept
-        : Name(std::move(name)) {}
+    explicit DeckInfo(std::string&& Name) noexcept
+        : Name(std::move(Name)) {}
 };
 
 struct Deck final {
@@ -24,6 +24,6 @@ struct Deck final {
     Deck(Deck&&)                     = default;
     Deck& operator=(Deck&&) noexcept = default;
 
-    explicit Deck(struct DeckInfo&& deckInfo) noexcept
-        : DeckInfo(std::move(deckInfo)) {}
+    explicit Deck(struct DeckInfo&& DeckInfo) noexcept
+        : DeckInfo(std::move(DeckInfo)) {}
 };

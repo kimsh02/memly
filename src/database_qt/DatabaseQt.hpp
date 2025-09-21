@@ -13,11 +13,11 @@ public:
     DatabaseQt();
     ~DatabaseQt();
 
-    bool BeginTransaction() { return m_Db.transaction(); }
+    bool BeginTx() { return m_Db.transaction(); }
 
-    bool CommitTransaction() { return m_Db.commit(); }
+    bool CommitTx() { return m_Db.commit(); }
 
-    bool RollbackTransaction() { return m_Db.rollback(); }
+    bool RollbackTx() { return m_Db.rollback(); }
 
     class Stmt {
     public:
@@ -42,17 +42,16 @@ public:
         // static inline QVariant ToVariant(int v) { return QVariant(v); }
 
         template <class... Ts>
-        Stmt& Bind(Ts&&... args) {
-            (m_Query.addBindValue(toVariant(std::forward<Ts>(args))), ...);
+        Stmt& Bind(Ts&&... Args) {
+            (m_Query.addBindValue(ToVariant(std::forward<Ts>(Args))), ...);
             return *this;
         }
 
         void Exec();
-        void ExecImmediate();
 
         [[nodiscard]] bool Next() noexcept { return m_Query.next(); }
 
-        [[nodiscard]] QVariant Value(std::size_t i) const { return m_Query.value(i); };
+        [[nodiscard]] QVariant Value(std::size_t I) const { return m_Query.value(I); };
 
         // [[nodiscard]] Stmt&& BindValue(std::size_t i, const QVariant& qv) noexcept {
         //     m_Query.bindValue(i, qv);
@@ -61,7 +60,7 @@ public:
 
         void Finish() noexcept { m_Query.finish(); }
 
-        [[nodiscard]] std::size_t LastInsertID() const {
+        [[nodiscard]] std::size_t LastInsertId() const {
             return m_Query.lastInsertId().toULongLong();
         }
 
@@ -70,20 +69,20 @@ public:
 
         QSqlQuery m_Query;
 
-        explicit Stmt(QSqlQuery&& q) noexcept
-            : m_Query(std::move(q)) {}
+        explicit Stmt(QSqlQuery&& Q) noexcept
+            : m_Query(std::move(Q)) {}
 
-        static QVariant toVariant(const std::string& s) { return QVariant(QString(s.c_str())); }
+        static QVariant ToVariant(const std::string& S) { return QVariant(QString(S.c_str())); }
 
-        static QVariant toVariant(std::size_t v) { return QVariant(qulonglong(v)); }
+        static QVariant ToVariant(std::size_t V) { return QVariant(qulonglong(V)); }
     };
 
-    [[nodiscard]] Stmt Prepare(const char* sql) const;
+    [[nodiscard]] Stmt Prepare(const char* Sql) const;
 
 private:
     QSqlDatabase m_Db;
 
-    void exec(const char* sql) const;
+    void Exec(const char* Sql) const;
 
-    void ensureSchema() const;
+    void EnsureSchema() const;
 };

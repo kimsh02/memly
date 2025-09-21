@@ -11,8 +11,8 @@ struct AppSettings {
     AppSettings(AppSettings&&) noexcept            = default;
     AppSettings& operator=(AppSettings&&) noexcept = default;
 
-    explicit AppSettings(std::size_t lastTargetLanguageIndex) noexcept
-        : LastTargetLanguageIndex(lastTargetLanguageIndex) {}
+    explicit AppSettings(std::size_t LastTargetLanguageIndex) noexcept
+        : LastTargetLanguageIndex(LastTargetLanguageIndex) {}
 };
 
 struct UserSettings {
@@ -24,8 +24,8 @@ struct UserSettings {
     UserSettings(UserSettings&&) noexcept            = default;
     UserSettings& operator=(UserSettings&&) noexcept = default;
 
-    explicit UserSettings(std::string&& name) noexcept
-        : Name(std::move(name)) {}
+    explicit UserSettings(std::string&& Name) noexcept
+        : Name(std::move(Name)) {}
 };
 
 struct Settings final {
@@ -38,7 +38,7 @@ struct Settings final {
     Settings(Settings&&) noexcept            = default;
     Settings& operator=(Settings&&) noexcept = default;
 
-    explicit Settings(struct AppSettings&& appSettings, struct UserSettings&& userSettings) noexcept
-        : AppSettings(std::move(appSettings))
-        , UserSettings(std::move(userSettings)) {}
+    explicit Settings(struct AppSettings&& AppSettings, struct UserSettings&& UserSettings) noexcept
+        : AppSettings(std::move(AppSettings))
+        , UserSettings(std::move(UserSettings)) {}
 };

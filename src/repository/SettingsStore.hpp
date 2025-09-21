@@ -13,22 +13,22 @@ public:
     SettingsStore(SettingsStore&&) noexcept            = delete;
     SettingsStore& operator=(SettingsStore&&) noexcept = delete;
 
-    [[nodiscard]] const Settings* Read() const noexcept { return &m_SettingsRecord.Settings; }
+    [[nodiscard]] const Settings* Read() const noexcept {
+        return &m_SettingsCache.at(Default::s_UserId).Settings;
+    }
 
     enum class UserField { Name };
 
     using UVResult = Types::VResult<UserField>;
 
-    [[nodiscard]] UVResult Update(Settings&& settings);
+    [[nodiscard]] UVResult Update(Settings&& Settings);
 
-    explicit SettingsStore(const DatabaseQt& db)
-        : m_Db(db)
-        , m_SettingsRecord(initSettingsRecord()) {}
+    explicit SettingsStore(const DatabaseQt& Db);
 
 private:
     struct Default {
         inline static constexpr std::size_t s_TargetLangIdx = 9;
-        inline static constexpr std::size_t s_UserID        = 1;
+        inline static constexpr std::size_t s_UserId        = 1;
     };
 
     struct SQL {
@@ -54,20 +54,17 @@ private:
     DatabaseQt::Stmt m_ReadStmt   = m_Db.Prepare(SQL::s_ReadSQL);
     DatabaseQt::Stmt m_UpdateStmt = m_Db.Prepare(SQL::s_UpdateSQL);
 
-    SettingsRecord m_SettingsRecord;
+    std::unordered_map<std::size_t, SettingsRecord> m_SettingsCache;
 
-    SettingsRecord initSettingsRecord();
-
-    SettingsRecord dbRead();
+    void UpsertCache();
 
     enum class AppField { LangIdx };
-    enum class ContextField { ID };
+    enum class ContextField { Id };
 
     using AVResult = Types::VResult<AppField>;
     using CVResult = Types::VResult<ContextField>;
 
-    // void validate(const SettingsContext&, const AppSettings&, const UserSettings&) const;
-    [[nodiscard]] CVResult validateContextFields(const SettingsContext& settingsContext) const;
-    [[nodiscard]] AVResult validateAppFields(const AppSettings& appSettings) const;
-    [[nodiscard]] UVResult validateUserFields(const UserSettings& userSettings) const;
+    [[nodiscard]] CVResult ValidateContextFields(const SettingsContext& SettingsContext) const;
+    [[nodiscard]] AVResult ValidateAppFields(const AppSettings& AppSettings) const;
+    [[nodiscard]] UVResult ValidateUserFields(const UserSettings& UserSettings) const;
 };

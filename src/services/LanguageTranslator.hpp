@@ -13,7 +13,7 @@ public:
     LanguageTranslator(LanguageTranslator&&) noexcept            = delete;
     LanguageTranslator& operator=(LanguageTranslator&&) noexcept = delete;
 
-    LanguageTranslator() noexcept { loadLastTargetIndex(); }
+    LanguageTranslator() noexcept { LoadLastTargetIndex(); }
 
     [[nodiscard]] std::span<const std::string_view> GetLatinLangNames() const noexcept {
         return s_LatinLangNames;
@@ -25,7 +25,7 @@ public:
 
     [[nodiscard]] std::size_t GetTargetIndex() const noexcept { return m_TargetIndex; }
 
-    void SetTargetIndex(std::size_t index) noexcept;
+    void SetTargetIndex(std::size_t Index) noexcept;
 
     static constexpr std::size_t LangCount() noexcept { return s_LatinLangCodes.size(); }
 
@@ -54,5 +54,5 @@ private:
 
     std::size_t m_TargetIndex;
 
-    void loadLastTargetIndex() noexcept;
+    void LoadLastTargetIndex() noexcept;
 };

@@ -1,5 +1,7 @@
 #include "database_qt/DatabaseQt.hpp"
 
+#include <print>
+
 #include "gui/Paths.hpp"
 #include "util/Util.hpp"
 
@@ -11,44 +13,50 @@ DatabaseQt::DatabaseQt() {
         throw std::runtime_error(m_Db.lastError().text().toStdString());
     }
 
-    exec("PRAGMA user_version=1;");
-    exec("PRAGMA foreign_keys=ON;");
-    exec("PRAGMA journal_mode=WAL;");
-    exec("PRAGMA synchronous = FULL;");
-    exec("PRAGMA optimize;");
+    auto ConnctionNames = QSqlDatabase::connectionNames();
+    for (auto& CN : ConnctionNames) {
+        std::string Str = CN.toStdString();
+        std::println("{}", Str);
+    }
 
-    ensureSchema();
+    Exec("PRAGMA user_version=1;");
+    Exec("PRAGMA foreign_keys=ON;");
+    Exec("PRAGMA journal_mode=WAL;");
+    Exec("PRAGMA synchronous = FULL;");
+    Exec("PRAGMA optimize;");
+
+    EnsureSchema();
 }
 
 DatabaseQt::~DatabaseQt() { m_Db.close(); }
 
-void DatabaseQt::exec(const char* sql) const {
-    QSqlQuery query(m_Db);
-    if (!query.exec(sql)) {
-        Fatal(query.lastError().text().toStdString());
+void DatabaseQt::Exec(const char* Sql) const {
+    QSqlQuery Query(m_Db);
+    if (!Query.exec(Sql)) {
+        Fatal(Query.lastError().text().toStdString());
     }
 }
 
-[[nodiscard]] DatabaseQt::Stmt DatabaseQt::Prepare(const char* sql) const {
-    QSqlQuery query(m_Db);
-    if (!query.prepare(sql)) {
-        Fatal(query.lastError().text().toStdString());
+[[nodiscard]] DatabaseQt::Stmt DatabaseQt::Prepare(const char* Sql) const {
+    QSqlQuery Query(m_Db);
+    if (!Query.prepare(Sql)) {
+        Fatal(Query.lastError().text().toStdString());
     }
-    return Stmt(std::move(query));
+    return Stmt(std::move(Query));
 }
 
-void DatabaseQt::ensureSchema() const {
-    exec(R"(CREATE TABLE IF NOT EXISTS settings (
+void DatabaseQt::EnsureSchema() const {
+    Exec(R"(CREATE TABLE IF NOT EXISTS settings (
         id               INTEGER PRIMARY KEY,
         target_lang_idx  INTEGER NOT NULL,
         name             TEXT
     );)");
-    exec(R"(CREATE TABLE IF NOT EXISTS decks (
+    Exec(R"(CREATE TABLE IF NOT EXISTS decks (
         id             INTEGER PRIMARY KEY AUTOINCREMENT,
         card_count     INTEGER NOT NULL DEFAULT 0,
         name           TEXT NOT NULL UNIQUE
     );)");
-    exec(R"(CREATE TABLE IF NOT EXISTS cards (
+    Exec(R"(CREATE TABLE IF NOT EXISTS cards (
         id             INTEGER PRIMARY KEY AUTOINCREMENT,
         deck_id        INTEGER NOT NULL,
         created        TEXT    NOT NULL,
@@ -70,18 +78,17 @@ void DatabaseQt::ensureSchema() const {
         FOREIGN KEY(deck_id) REFERENCES decks(id) ON DELETE CASCADE
     );)");
 
-    // Maintain decks.card_count via triggers (SQLite disallows subqueries in generated columns)
-    exec(R"(CREATE TRIGGER IF NOT EXISTS trg_cards_insert AFTER INSERT ON cards
+    Exec(R"(CREATE TRIGGER IF NOT EXISTS trg_cards_insert AFTER INSERT ON cards
     BEGIN
       UPDATE decks SET card_count = card_count + 1 WHERE id = NEW.deck_id;
     END;)");
 
-    exec(R"(CREATE TRIGGER IF NOT EXISTS trg_cards_delete AFTER DELETE ON cards
+    Exec(R"(CREATE TRIGGER IF NOT EXISTS trg_cards_delete AFTER DELETE ON cards
     BEGIN
       UPDATE decks SET card_count = card_count - 1 WHERE id = OLD.deck_id;
     END;)");
 
-    exec(R"(CREATE TRIGGER IF NOT EXISTS trg_cards_update_deck AFTER UPDATE OF deck_id ON cards
+    Exec(R"(CREATE TRIGGER IF NOT EXISTS trg_cards_update_deck AFTER UPDATE OF deck_id ON cards
     BEGIN
       UPDATE decks SET card_count = card_count - 1 WHERE id = OLD.deck_id;
       UPDATE decks SET card_count = card_count + 1 WHERE id = NEW.deck_id;
@@ -90,12 +97,6 @@ void DatabaseQt::ensureSchema() const {
 
 void DatabaseQt::Stmt::Exec() {
     if (!m_Query.exec()) {
-        Fatal(m_Query.lastError().text().toStdString());
-    }
-}
-
-void DatabaseQt::Stmt::ExecImmediate() {
-    if (!m_Query.exec("BEGIN IMMEDIATE")) {
         Fatal(m_Query.lastError().text().toStdString());
     }
 }

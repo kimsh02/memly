@@ -15,28 +15,28 @@ public:
     DeckStore(DeckStore&&) noexcept            = delete;
     DeckStore& operator=(DeckStore&&) noexcept = delete;
 
-    explicit DeckStore(const DatabaseQt& db) noexcept;
+    explicit DeckStore(const DatabaseQt& Db);
 
     enum class InfoField { Name };
 
     using IVResult = Types::VResult<InfoField>;
 
-    [[nodiscard]] IVResult Create(Deck&& deck);
+    [[nodiscard]] IVResult Create(Deck&& Deck);
 
-    [[nodiscard]] const Deck* Read(std::size_t deckID) noexcept;
+    [[nodiscard]] const Deck* Read(std::size_t DeckId) const noexcept;
 
-    [[nodiscard]] IVResult Update(std::size_t deckID, Deck&& deck);
+    [[nodiscard]] IVResult Update(std::size_t DeckId, Deck&& Deck);
 
-    void Delete(std::size_t deckID) noexcept;
+    void Delete(std::size_t DeckId) noexcept;
 
-    [[nodiscard]] Types::IDVector GetDeckIDs() const;
+    [[nodiscard]] Types::IdVector GetDeckIds() const;
 
 private:
     struct SQL {
         inline static constexpr auto s_CreateSQL = R"(
             INSERT INTO decks(name)
             VALUES(?);)";
-        inline static constexpr auto s_GetIDsSQL = R"(
+        inline static constexpr auto s_GetIdsSQL = R"(
             SELECT id FROM decks;)";
         inline static constexpr auto s_ReadSQL   = R"(
             SELECT * FROM decks
@@ -61,21 +61,19 @@ private:
     DatabaseQt::Stmt m_UpdateStmt = m_Db.Prepare(SQL::s_UpdateSQL);
     DatabaseQt::Stmt m_DeleteStmt = m_Db.Prepare(SQL::s_DeleteSQL);
 
-    using DeckRecordMap = std::unordered_map<std::size_t, DeckRecord>;
+    std::unordered_map<std::size_t, DeckRecord> m_DeckCache;
 
-    DeckRecordMap m_DeckRecords;
+    void CheckDeckId(std::size_t DeckId) const noexcept;
 
-    [[nodiscard]] DeckRecordMap::iterator getDeckRecordMapIter(std::size_t deckID) noexcept;
-
-    DeckRecord dbRead(std::size_t deckID);
+    void UpsertCache(std::size_t DeckId);
 
     enum class StatField { CardCount };
-    enum class ContextField { ID };
+    enum class ContextField { Id };
 
     using SVResult = Types::VResult<StatField>;
     using CVResult = Types::VResult<ContextField>;
 
-    [[nodiscard]] CVResult validateContextFields(const DeckContext& deckContext) const;
-    [[nodiscard]] SVResult validateStatFields(const DeckStats& deckStats) const;
-    [[nodiscard]] IVResult validateInfoFields(const DeckInfo& deckInfo) const;
+    [[nodiscard]] CVResult ValidateContextFields(const DeckContext& DeckContext) const;
+    [[nodiscard]] SVResult ValidateStatFields(const DeckStats& DeckStats) const;
+    [[nodiscard]] IVResult ValidateInfoFields(const DeckInfo& DeckInfo) const;
 };

@@ -4,7 +4,6 @@
 
 #include "database_qt/DatabaseQt.hpp"
 #include "gui/App.hpp"
-#include "repository/CardStore.hpp"
 #include "repository/DeckStore.hpp"
 #include "repository/SettingsStore.hpp"
 

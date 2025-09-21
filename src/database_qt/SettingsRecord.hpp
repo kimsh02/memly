@@ -10,13 +10,13 @@ public:
     SettingsContext(SettingsContext&&) noexcept            = default;
     SettingsContext& operator=(SettingsContext&&) noexcept = default;
 
-    explicit SettingsContext(std::size_t id) noexcept
-        : m_ConstID(id) {}
+    explicit SettingsContext(std::size_t Id) noexcept
+        : m_ConstId(Id) {}
 
-    [[nodiscard]] std::size_t ID() const noexcept { return m_ConstID; }
+    [[nodiscard]] std::size_t Id() const noexcept { return m_ConstId; }
 
 private:
-    std::size_t m_ConstID;
+    std::size_t m_ConstId;
 };
 
 struct SettingsRecord final {
@@ -29,8 +29,8 @@ struct SettingsRecord final {
     SettingsRecord(SettingsRecord&&) noexcept            = default;
     SettingsRecord& operator=(SettingsRecord&&) noexcept = default;
 
-    explicit SettingsRecord(struct SettingsContext&& settingsContext,
-                            struct Settings&&        settings) noexcept
-        : SettingsContext(std::move(settingsContext))
-        , Settings(std::move(settings)) {}
+    explicit SettingsRecord(struct SettingsContext&& SettingsContext,
+                            struct Settings&&        Settings) noexcept
+        : SettingsContext(std::move(SettingsContext))
+        , Settings(std::move(Settings)) {}
 };

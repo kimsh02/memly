@@ -12,7 +12,7 @@ using OptionalPathString = std::optional<PathString>;
 using TimeString         = std::string; // std::chrono::system_clock::time_point
 using OptionalTimeString = std::optional<TimeString>;
 
-using IDVector = std::vector<std::size_t>;
+using IdVector = std::vector<std::size_t>;
 
 template <typename FieldType>
     requires std::is_enum_v<FieldType>
@@ -26,9 +26,9 @@ struct ValidationError {
     ValidationError(ValidationError&&) noexcept            = default;
     ValidationError& operator=(ValidationError&&) noexcept = delete;
 
-    ValidationError(FieldType field, std::string&& message)
-        : Field(field)
-        , Message(std::move(message)) {}
+    ValidationError(FieldType Field, std::string&& Message)
+        : Field(Field)
+        , Message(std::move(Message)) {}
 };
 
 template <typename FieldType>
@@ -38,14 +38,15 @@ template <typename FieldType>
 using VResult = std::expected<void, ValidationErrors<FieldType>>;
 
 template <typename FieldType>
-inline std::string VResultToString(const VResult<FieldType>& res) {
-    std::string out;
+inline std::string VResultToString(const VResult<FieldType>& Res) {
+    std::string Out;
 
-    const ValidationErrors<FieldType>& errors = res.error();
-    for (std::size_t i = 0; i < errors.size(); i++) {
-        out.append(errors.at(i).Message);
-        if (i < errors.size() - 1) out.append(", ");
+    const ValidationErrors<FieldType>& errors = Res.error();
+    for (std::size_t I = 0; I < errors.size(); I++) {
+        Out.append(errors.at(I).Message);
+        if (I < errors.size() - 1)
+            Out.append(", ");
     }
-    return out;
+    return Out;
 }
 }

@@ -2,83 +2,88 @@
 
 #include "util/Util.hpp"
 
-SettingsRecord SettingsStore::dbRead() {
-    m_ReadStmt.Bind(Default::s_UserID);
+void SettingsStore::UpsertCache() {
+    if (m_SettingsCache.size() > 1) {
+        Fatal("More than one SettingsRecord was cached in m_SettingsCache");
+    }
+    m_ReadStmt.Bind(Default::s_UserId);
     m_ReadStmt.Exec();
     if (!m_ReadStmt.Next()) {
-        Fatal("ReadStmt.Exec() did not return a row");
+        Fatal(std::format("Could not read expected settings row id: {}", Default::s_UserId));
     }
-    SettingsContext settingsContext(m_ReadStmt.Value(0).toULongLong());
-    if (auto res = validateContextFields(settingsContext); !res) {
-        Fatal(Types::VResultToString(res));
+    SettingsContext SettingsContext(m_ReadStmt.Value(0).toULongLong());
+    if (auto Res = ValidateContextFields(SettingsContext); !Res) {
+        Fatal(Types::VResultToString(Res));
     }
-    AppSettings appSettings(m_ReadStmt.Value(1).toULongLong());
-    if (auto res = validateAppFields(appSettings); !res) {
-        Fatal(Types::VResultToString(res));
+    AppSettings AppSettings(m_ReadStmt.Value(1).toULongLong());
+    if (auto Res = ValidateAppFields(AppSettings); !Res) {
+        Fatal(Types::VResultToString(Res));
     }
-    UserSettings userSettings(m_ReadStmt.Value(2).toString().toStdString());
+    UserSettings UserSettings(m_ReadStmt.Value(2).toString().toStdString());
     m_ReadStmt.Finish();
-    if (auto res = validateUserFields(userSettings); !res) {
-        Fatal(Types::VResultToString(res));
+    if (auto Res = ValidateUserFields(UserSettings); !Res) {
+        Fatal(Types::VResultToString(Res));
     }
-    Settings       settings(std::move(appSettings), std::move(userSettings));
-    SettingsRecord settingsRecord(std::move(settingsContext), std::move(settings));
-    return settingsRecord;
+    Settings       Settings(std::move(AppSettings), std::move(UserSettings));
+    SettingsRecord SettingsRecord(std::move(SettingsContext), std::move(Settings));
+    m_SettingsCache.insert_or_assign(Default::s_UserId, std::move(SettingsRecord));
 }
 
-SettingsRecord SettingsStore::initSettingsRecord() {
-    DatabaseQt::Stmt upsertStmt = m_Db.Prepare(SQL::s_UpsertSQL);
-    upsertStmt.Bind(Default::s_UserID, Default::s_TargetLangIdx, std::string{});
-    upsertStmt.ExecImmediate();
-    return dbRead();
+SettingsStore::SettingsStore(const DatabaseQt& Db)
+    : m_Db(Db) {
+    DatabaseQt::Stmt UpsertStmt = m_Db.Prepare(SQL::s_UpsertSQL);
+    UpsertStmt.Bind(Default::s_UserId, Default::s_TargetLangIdx, std::string{});
+    UpsertStmt.Exec();
+
+    UpsertCache();
 }
 
 [[nodiscard]] SettingsStore::CVResult
-SettingsStore::validateContextFields(const SettingsContext& settingsContext) const {
-    Types::ValidationErrors<ContextField> v;
-    if (std::size_t id = settingsContext.ID(); id != Default::s_UserID) {
-        v.emplace_back(ContextField::ID, std::format("Invalid user id: {}", id));
+SettingsStore::ValidateContextFields(const SettingsContext& SettingsContext) const {
+    Types::ValidationErrors<ContextField> VE;
+    if (std::size_t Id = SettingsContext.Id(); Id != Default::s_UserId) {
+        VE.emplace_back(ContextField::Id, std::format("Invalid user id: {}", Id));
     }
-    if (v.empty())
+    if (VE.empty())
         return CVResult{};
-    return std::unexpected(std::move(v));
+    return std::unexpected(std::move(VE));
 }
 
 [[nodiscard]] SettingsStore::AVResult
-SettingsStore::validateAppFields(const AppSettings& appSettings) const {
-    Types::ValidationErrors<AppField> v;
-    if (std::size_t idx = appSettings.LastTargetLanguageIndex;
-        idx < 0 || idx >= Limit::s_LANG_COUNT) {
-        v.emplace_back(AppField::LangIdx, std::format("Invalid language index: {}", idx));
+SettingsStore::ValidateAppFields(const AppSettings& AppSettings) const {
+    Types::ValidationErrors<AppField> VE;
+    if (std::size_t Idx = AppSettings.LastTargetLanguageIndex;
+        Idx < 0 || Idx >= Limit::s_LANG_COUNT) {
+        VE.emplace_back(AppField::LangIdx, std::format("Invalid language index: {}", Idx));
     }
-    if (v.empty())
+    if (VE.empty())
         return AVResult{};
-    return std::unexpected(std::move(v));
+    return std::unexpected(std::move(VE));
 }
 
 [[nodiscard]] SettingsStore::UVResult
-SettingsStore::validateUserFields(const UserSettings& userSettings) const {
-    Types::ValidationErrors<UserField> v;
-    if (const auto& s = userSettings.Name; s.size() > Limit::s_MAX_NAME_LEN) {
-        v.emplace_back(
+SettingsStore::ValidateUserFields(const UserSettings& UserSettings) const {
+    Types::ValidationErrors<UserField> VE;
+    if (const auto& S = UserSettings.Name; S.size() > Limit::s_MAX_NAME_LEN) {
+        VE.emplace_back(
             UserField::Name,
-            std::format("Settings name exceeds {} characters: {}", Limit::s_MAX_NAME_LEN, s));
+            std::format("Settings name exceeds {} characters: {}", Limit::s_MAX_NAME_LEN, S));
     }
-    if (v.empty())
+    if (VE.empty())
         return UVResult{};
-    return std::unexpected(std::move(v));
+    return std::unexpected(std::move(VE));
 }
 
-[[nodiscard]] SettingsStore::UVResult SettingsStore::Update(Settings&& settings) {
-    if (auto res = validateUserFields(settings.UserSettings); !res) {
-        return res;
+[[nodiscard]] SettingsStore::UVResult SettingsStore::Update(Settings&& Settings) {
+    if (auto Res = ValidateUserFields(Settings.UserSettings); !Res) {
+        return Res;
     }
-    m_UpdateStmt.Bind(settings.AppSettings.LastTargetLanguageIndex,
-                      settings.UserSettings.Name,
-                      Default::s_UserID);
-    m_UpdateStmt.ExecImmediate();
+    m_UpdateStmt.Bind(Settings.AppSettings.LastTargetLanguageIndex,
+                      Settings.UserSettings.Name,
+                      Default::s_UserId);
+    m_UpdateStmt.Exec();
     m_UpdateStmt.Finish();
 
-    m_SettingsRecord = dbRead();
+    UpsertCache();
     return UVResult{};
 }

@@ -22,16 +22,16 @@ struct ReviewState {
     ReviewState(ReviewState&&) noexcept            = default;
     ReviewState& operator=(ReviewState&&) noexcept = delete;
 
-    explicit ReviewState(double                      difficulty,
-                         double                      stability,
-                         int                         reviews,
-                         int                         lapses,
-                         Types::OptionalTimeString&& due = std::nullopt) noexcept
-        : Difficulty(difficulty)
-        , Stability(stability)
-        , Reviews(reviews)
-        , Lapses(lapses)
-        , Due(std::move(due)) {}
+    explicit ReviewState(double                      Difficulty,
+                         double                      Stability,
+                         int                         Reviews,
+                         int                         Lapses,
+                         Types::OptionalTimeString&& Due = std::nullopt) noexcept
+        : Difficulty(Difficulty)
+        , Stability(Stability)
+        , Reviews(Reviews)
+        , Lapses(Lapses)
+        , Due(std::move(Due)) {}
 };
 
 struct CardContent {
@@ -46,14 +46,14 @@ struct CardContent {
     CardContent(CardContent&&) noexcept            = default;
     CardContent& operator=(CardContent&&) noexcept = delete;
 
-    explicit CardContent(std::string&&               frontText,
-                         std::string&&               backText,
-                         Types::PathString&&         audio,
-                         Types::OptionalPathString&& image = std::nullopt) noexcept
-        : FrontText(std::move(frontText))
-        , BackText(std::move(backText))
-        , Audio(std::move(audio))
-        , Image(std::move(image)) {}
+    explicit CardContent(std::string&&               FrontText,
+                         std::string&&               BackText,
+                         Types::PathString&&         Audio,
+                         Types::OptionalPathString&& Image = std::nullopt) noexcept
+        : FrontText(std::move(FrontText))
+        , BackText(std::move(BackText))
+        , Audio(std::move(Audio))
+        , Image(std::move(Image)) {}
 };
 
 struct FlashCard final {
@@ -66,7 +66,7 @@ struct FlashCard final {
     FlashCard(FlashCard&&) noexcept            = default;
     FlashCard& operator=(FlashCard&&) noexcept = delete;
 
-    explicit FlashCard(CardContent&& content, ReviewState&& state) noexcept
-        : Content(std::move(content))
-        , State(std::move(state)) {}
+    explicit FlashCard(CardContent&& Content, ReviewState&& State) noexcept
+        : Content(std::move(Content))
+        , State(std::move(State)) {}
 };
