@@ -13,12 +13,6 @@ DatabaseQt::DatabaseQt() {
         throw std::runtime_error(m_Db.lastError().text().toStdString());
     }
 
-    auto ConnctionNames = QSqlDatabase::connectionNames();
-    for (auto& CN : ConnctionNames) {
-        std::string Str = CN.toStdString();
-        std::println("{}", Str);
-    }
-
     Exec("PRAGMA user_version=1;");
     Exec("PRAGMA foreign_keys=ON;");
     Exec("PRAGMA journal_mode=WAL;");
