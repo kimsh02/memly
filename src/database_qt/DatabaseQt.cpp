@@ -1,7 +1,5 @@
 #include "database_qt/DatabaseQt.hpp"
 
-#include <print>
-
 #include "gui/Paths.hpp"
 #include "util/Util.hpp"
 
