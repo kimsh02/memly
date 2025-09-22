@@ -17,8 +17,7 @@ public:
         , m_DeckStore(DeckStore)
         , m_CardStore(CardStore) {}
 
-    // void CreateCard()
-    void DeleteDeck(int DeckId); // begins tx, deletes deck, evicts caches
+    void DeleteDeck(int DeckId); // TODO: begins tx, deletes deck, evicts caches
 
 private:
     DatabaseQt& m_Db;

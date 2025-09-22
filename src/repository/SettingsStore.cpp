@@ -38,18 +38,18 @@ SettingsStore::SettingsStore(const DatabaseQt& Db)
     UpsertCache();
 }
 
-[[nodiscard]] SettingsStore::CVResult
+[[nodiscard]] SettingsStore::ContextVResult
 SettingsStore::ValidateContextFields(const SettingsContext& SettingsContext) const {
     Types::ValidationErrors<ContextField> VE;
     if (std::size_t Id = SettingsContext.Id(); Id != Default::s_UserId) {
         VE.emplace_back(ContextField::Id, std::format("Invalid user id: {}", Id));
     }
     if (VE.empty())
-        return CVResult{};
+        return ContextVResult{};
     return std::unexpected(std::move(VE));
 }
 
-[[nodiscard]] SettingsStore::AVResult
+[[nodiscard]] SettingsStore::AppVResult
 SettingsStore::ValidateAppFields(const AppSettings& AppSettings) const {
     Types::ValidationErrors<AppField> VE;
     if (std::size_t Idx = AppSettings.LastTargetLanguageIndex;
@@ -57,11 +57,11 @@ SettingsStore::ValidateAppFields(const AppSettings& AppSettings) const {
         VE.emplace_back(AppField::LangIdx, std::format("Invalid language index: {}", Idx));
     }
     if (VE.empty())
-        return AVResult{};
+        return AppVResult{};
     return std::unexpected(std::move(VE));
 }
 
-[[nodiscard]] SettingsStore::UVResult
+[[nodiscard]] SettingsStore::UserVResult
 SettingsStore::ValidateUserFields(const UserSettings& UserSettings) const {
     Types::ValidationErrors<UserField> VE;
     if (const auto& S = UserSettings.Name; S.size() > Limit::s_MAX_NAME_LEN) {
@@ -70,11 +70,11 @@ SettingsStore::ValidateUserFields(const UserSettings& UserSettings) const {
             std::format("Settings name exceeds {} characters: {}", Limit::s_MAX_NAME_LEN, S));
     }
     if (VE.empty())
-        return UVResult{};
+        return UserVResult{};
     return std::unexpected(std::move(VE));
 }
 
-[[nodiscard]] SettingsStore::UVResult SettingsStore::Update(Settings&& Settings) {
+[[nodiscard]] SettingsStore::UserVResult SettingsStore::Update(Settings&& Settings) {
     if (auto Res = ValidateUserFields(Settings.UserSettings); !Res) {
         return Res;
     }
@@ -85,5 +85,5 @@ SettingsStore::ValidateUserFields(const UserSettings& UserSettings) const {
     m_UpdateStmt.Finish();
 
     UpsertCache();
-    return UVResult{};
+    return UserVResult{};
 }

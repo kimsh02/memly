@@ -19,13 +19,13 @@ public:
 
     enum class InfoField { Name };
 
-    using IVResult = Types::VResult<InfoField>;
+    using InfoVResult = Types::VResult<InfoField>;
 
-    [[nodiscard]] IVResult Create(Deck&& Deck);
+    [[nodiscard]] InfoVResult Create(Deck&& Deck);
 
     [[nodiscard]] const Deck* Read(std::size_t DeckId) const noexcept;
 
-    [[nodiscard]] IVResult Update(std::size_t DeckId, Deck&& Deck);
+    [[nodiscard]] InfoVResult Update(std::size_t DeckId, Deck&& Deck);
 
     void Delete(std::size_t DeckId) noexcept;
 
@@ -70,10 +70,10 @@ private:
     enum class StatField { CardCount };
     enum class ContextField { Id };
 
-    using SVResult = Types::VResult<StatField>;
-    using CVResult = Types::VResult<ContextField>;
+    using StatVResult    = Types::VResult<StatField>;
+    using ContextVResult = Types::VResult<ContextField>;
 
-    [[nodiscard]] CVResult ValidateContextFields(const DeckContext& DeckContext) const;
-    [[nodiscard]] SVResult ValidateStatFields(const DeckStats& DeckStats) const;
-    [[nodiscard]] IVResult ValidateInfoFields(const DeckInfo& DeckInfo) const;
+    [[nodiscard]] ContextVResult ValidateContextFields(const DeckContext& DeckContext) const;
+    [[nodiscard]] StatVResult    ValidateStatFields(const DeckStats& DeckStats) const;
+    [[nodiscard]] InfoVResult    ValidateInfoFields(const DeckInfo& DeckInfo) const;
 };

@@ -19,9 +19,9 @@ public:
 
     enum class UserField { Name };
 
-    using UVResult = Types::VResult<UserField>;
+    using UserVResult = Types::VResult<UserField>;
 
-    [[nodiscard]] UVResult Update(Settings&& Settings);
+    [[nodiscard]] UserVResult Update(Settings&& Settings);
 
     explicit SettingsStore(const DatabaseQt& Db);
 
@@ -61,10 +61,11 @@ private:
     enum class AppField { LangIdx };
     enum class ContextField { Id };
 
-    using AVResult = Types::VResult<AppField>;
-    using CVResult = Types::VResult<ContextField>;
+    using AppVResult     = Types::VResult<AppField>;
+    using ContextVResult = Types::VResult<ContextField>;
 
-    [[nodiscard]] CVResult ValidateContextFields(const SettingsContext& SettingsContext) const;
-    [[nodiscard]] AVResult ValidateAppFields(const AppSettings& AppSettings) const;
-    [[nodiscard]] UVResult ValidateUserFields(const UserSettings& UserSettings) const;
+    [[nodiscard]] ContextVResult
+                              ValidateContextFields(const SettingsContext& SettingsContext) const;
+    [[nodiscard]] AppVResult  ValidateAppFields(const AppSettings& AppSettings) const;
+    [[nodiscard]] UserVResult ValidateUserFields(const UserSettings& UserSettings) const;
 };

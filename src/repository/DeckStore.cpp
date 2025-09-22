@@ -33,8 +33,8 @@ void DeckStore::UpsertCache(std::size_t DeckId) {
     if (auto Res = ValidateInfoFields(DeckInfo); !Res) {
         Fatal(Types::VResultToString(Res));
     }
-    Deck       Deck(std::move(DeckInfo));
-    DeckRecord DeckRecord(std::move(DeckContext), std::move(DeckStats), std::move(Deck));
+    Deck       Deck(std::move(DeckInfo), std::move(DeckStats));
+    DeckRecord DeckRecord(std::move(DeckContext), std::move(Deck));
     m_DeckCache.insert_or_assign(DeckId, std::move(DeckRecord));
 }
 
@@ -48,40 +48,42 @@ DeckStore::DeckStore(const DatabaseQt& Db)
     }
 }
 
-[[nodiscard]] DeckStore::CVResult
+[[nodiscard]] DeckStore::ContextVResult
 DeckStore::ValidateContextFields(const DeckContext& DeckContext) const {
     Types::ValidationErrors<ContextField> VE;
     if (auto Id = DeckContext.Id() < 0) {
         VE.emplace_back(ContextField::Id, std::format("Invalid deck id: {}", Id));
     }
     if (VE.empty())
-        return CVResult{};
+        return ContextVResult{};
     return std::unexpected(std::move(VE));
 }
 
-[[nodiscard]] DeckStore::SVResult DeckStore::ValidateStatFields(const DeckStats& DeckStats) const {
+[[nodiscard]] DeckStore::StatVResult
+DeckStore::ValidateStatFields(const DeckStats& DeckStats) const {
     Types::ValidationErrors<StatField> VE;
     if (auto CC = DeckStats.CardCount() < 0) {
         VE.emplace_back(StatField::CardCount, std::format("Invalid deck card count: {}", CC));
     }
     if (VE.empty())
-        return SVResult{};
+        return StatVResult{};
     return std::unexpected(std::move(VE));
 }
 
-[[nodiscard]] DeckStore::IVResult DeckStore::ValidateInfoFields(const DeckInfo& DeckInfo) const {
+[[nodiscard]] DeckStore::InfoVResult DeckStore::ValidateInfoFields(const DeckInfo& DeckInfo) const {
     Types::ValidationErrors<InfoField> VE;
     if (const auto& S = DeckInfo.Name; S.size() > Limit::s_MAX_NAME_LEN) {
         VE.emplace_back(
             InfoField::Name,
             std::format("Deck name exceeds {} characters: {}", Limit::s_MAX_NAME_LEN, S));
     }
+    // TODO: Check duplicate names
     if (VE.empty())
-        return IVResult{};
+        return InfoVResult{};
     return std::unexpected(std::move(VE));
 }
 
-[[nodiscard]] DeckStore::IVResult DeckStore::Create(Deck&& Deck) {
+[[nodiscard]] DeckStore::InfoVResult DeckStore::Create(Deck&& Deck) {
     if (auto Res = ValidateInfoFields(Deck.DeckInfo); !Res) {
         return Res;
     }
@@ -91,7 +93,7 @@ DeckStore::ValidateContextFields(const DeckContext& DeckContext) const {
     m_CreateStmt.Finish();
 
     UpsertCache(DeckId);
-    return IVResult{};
+    return InfoVResult{};
 }
 
 [[nodiscard]] const Deck* DeckStore::Read(std::size_t DeckId) const noexcept {
@@ -99,7 +101,7 @@ DeckStore::ValidateContextFields(const DeckContext& DeckContext) const {
     return &m_DeckCache.at(DeckId).Deck;
 }
 
-[[nodiscard]] DeckStore::IVResult DeckStore::Update(std::size_t DeckId, Deck&& Deck) {
+[[nodiscard]] DeckStore::InfoVResult DeckStore::Update(std::size_t DeckId, Deck&& Deck) {
     if (auto Res = ValidateInfoFields(Deck.DeckInfo); !Res) {
         return Res;
     }
@@ -108,7 +110,7 @@ DeckStore::ValidateContextFields(const DeckContext& DeckContext) const {
     m_UpdateStmt.Finish();
 
     UpsertCache(DeckId);
-    return IVResult{};
+    return InfoVResult{};
 }
 
 void DeckStore::Delete(std::size_t DeckId) noexcept {
