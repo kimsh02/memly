@@ -1,28 +1,20 @@
 #pragma once
 
-#include <cstdint>
-#include <string>
-
 #include "common/Types.hpp"
 
-enum class Rating : std::uint8_t { Again, Hard, Good, Easy };
+struct FlashcardRow {
+    const std::size_t         RowId;
+    const std::size_t         DeckRowId;
+    const Types::TimeString   CreatedAt;
+    Types::OptionalTimeString UpdatedAt;
+    Types::OptionalTimeString ReviewedAt;
 
-struct ReviewState {
     float                     Difficulty;
     float                     Stability;
     Types::OptionalTimeString DueAt;
-};
 
-struct CardContent {
     std::string               FrontText;
     std::string               BackText;
     Types::PathString         Audio;
     Types::OptionalPathString Image;
-};
-
-struct Flashcard {
-    const std::size_t RowId;
-
-    CardContent Content;
-    ReviewState State;
 };
