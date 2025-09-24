@@ -51,20 +51,17 @@ void DatabaseQt::EnsureSchema() const {
     Exec(R"(CREATE TABLE IF NOT EXISTS cards (
         id             INTEGER PRIMARY KEY AUTOINCREMENT,
         deck_id        INTEGER NOT NULL,
-        created        TEXT    NOT NULL,
-        last_updated   TEXT,
-        last_reviewed  TEXT,
+        created_at     TEXT    NOT NULL,
+        updated_at     TEXT,
+        reviewed_at    TEXT,
+
+        difficulty     REAL    NOT NULL,
+        stability      REAL    NOT NULL,
 
         front_text     TEXT    NOT NULL,
         back_text      TEXT    NOT NULL,
         audio_path     TEXT    NOT NULL,
         image_path     TEXT,
-
-        difficulty     REAL    NOT NULL,
-        stability      REAL    NOT NULL,
-        reviews        INTEGER NOT NULL,
-        lapses         INTEGER NOT NULL,
-        due            TEXT,
 
         UNIQUE(deck_id, front_text),
         FOREIGN KEY(deck_id) REFERENCES decks(id) ON DELETE CASCADE

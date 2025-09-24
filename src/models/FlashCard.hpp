@@ -8,9 +8,8 @@
 enum class Rating : std::uint8_t { Again, Hard, Good, Easy };
 
 struct ReviewState {
-    float                     Difficulty;
-    float                     Stability;
-    Types::OptionalTimeString DueAt;
+    float Difficulty;
+    float Stability;
 };
 
 struct CardContent {
@@ -21,7 +20,7 @@ struct CardContent {
 };
 
 struct Flashcard {
-    const std::size_t RowId;
+    const std::size_t Id;
 
     CardContent Content;
     ReviewState State;
