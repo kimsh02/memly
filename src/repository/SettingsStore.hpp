@@ -17,7 +17,7 @@ public:
         return &m_SettingsCache.at(Default::s_UserId).Settings;
     }
 
-    enum class UserField { Name };
+
 
     using UserVResult = Types::VResult<UserField>;
 

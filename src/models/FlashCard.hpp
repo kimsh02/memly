@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cstdint>
 #include <string>
 
 #include "common/Types.hpp"
@@ -21,6 +20,7 @@ struct CardContent {
 
 struct Flashcard {
     const std::size_t Id;
+    const std::size_t Deck_Id;
 
     CardContent Content;
     ReviewState State;

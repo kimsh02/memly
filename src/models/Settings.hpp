@@ -10,6 +10,9 @@ struct UserSettings {
     std::string Name;
 };
 
+enum class UserField { Name };
+enum class AppField { TargetLangIdx };
+
 struct Settings {
     const std::size_t Id;
 
