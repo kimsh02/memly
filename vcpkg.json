@@ -9,7 +9,6 @@
     "qtmultimedia",
     "qtimageformats",
     "qtsvg",
-    "boost-uuid",
     {
       "name": "google-cloud-cpp",
       "features": [

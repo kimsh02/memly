@@ -4,13 +4,6 @@ project(repetition-ai LANGUAGES C CXX)
 # Prefer config packages (vcpkg)
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG ON)
 
-# ------------------------ Optional: Homebrew LLVM preference -------------------
-# Use Homebrew LLVM by default if no compiler was pre-selected.
-if(NOT CMAKE_CXX_COMPILER AND EXISTS "/opt/homebrew/opt/llvm/bin/clang++")
-  set(CMAKE_C_COMPILER  "/opt/homebrew/opt/llvm/bin/clang"   CACHE FILEPATH "" FORCE)
-  set(CMAKE_CXX_COMPILER "/opt/homebrew/opt/llvm/bin/clang++" CACHE FILEPATH "" FORCE)
-endif()
-
 # ------------------------ Compile DB ------------------------------------------
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(QT_QML_GENERATE_QMLLS_INI ON)
@@ -37,14 +30,14 @@ file(GLOB_RECURSE DB_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/database_qt/
 file(GLOB_RECURSE DB_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/database_qt/*.[Hh]*")
 
 # Models / Repository / Services / Common / Wrappers
-file(GLOB_RECURSE MODEL_HDR    CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/models/*.[Hh]*")
-file(GLOB_RECURSE REPO_CPP     CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/repository/*.cpp")
-file(GLOB_RECURSE REPO_HDR     CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/repository/*.[Hh]*")
+file(GLOB_RECURSE MODEL_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/models/*.[Hh]*")
+file(GLOB_RECURSE REPO_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/repository/*.cpp")
+file(GLOB_RECURSE REPO_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/repository/*.[Hh]*")
 file(GLOB_RECURSE SERVICES_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/services/*.cpp")
 file(GLOB_RECURSE SERVICES_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/services/*.[Hh]*")
-file(GLOB_RECURSE COMMON_HDR   CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/common/*.[Hh]*")
-file(GLOB_RECURSE UTIL_HDR     CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/util/*.[Hh]*")
-file(GLOB_RECURSE WRAPPER_HDR  CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/service_wrappers/*.[Hh]*")
+file(GLOB_RECURSE COMMON_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/common/*.[Hh]*")
+file(GLOB_RECURSE UTIL_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/util/*.[Hh]*")
+file(GLOB_RECURSE WRAPPER_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/service_wrappers/*.[Hh]*")
 
 set(ALL_SOURCES
   ${SRC_MAIN}
@@ -109,13 +102,13 @@ qt_import_qml_plugins(repetition-ai)
 qt_finalize_executable(repetition-ai)
 
 # ======================== Tests: CTest + GoogleTest ===========================
-include(CTest)                 # defines BUILD_TESTING and enables testing
+include(CTest) # defines BUILD_TESTING and enables testing
 
 if(BUILD_TESTING)
   # Homebrew provides GTest config package: GTest::gtest, GTest::gtest_main
   find_package(GTest CONFIG REQUIRED)
 
-  include(GoogleTest)         # gtest_discover_tests()
+  include(GoogleTest) # gtest_discover_tests()
 
   # Collect test sources
   file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/tests/*.cpp")
