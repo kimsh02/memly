@@ -14,6 +14,7 @@ struct FlashcardRow {
     float Stability;
 
     std::string                FrontText;
+    std::string                FrontNormText;
     std::string                BackText;
     std::string                AudioPath;
     std::optional<std::string> ImagePath;

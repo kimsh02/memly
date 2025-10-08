@@ -4,12 +4,12 @@
 template <typename FieldType>
     requires std::is_enum_v<FieldType>
 struct DomainError {
-    FieldType   Field;
-    std::string Message;
+    FieldType        Field;
+    std::string_view Message;
 
-    DomainError(FieldType Field, std::string&& Message)
+    DomainError(FieldType Field, std::string_view Message)
         : Field(Field)
-        , Message(std::move(Message)) {}
+        , Message(Message) {}
 };
 
 template <typename FieldType>
