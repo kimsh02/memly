@@ -61,6 +61,7 @@ void DatabaseQt::EnsureSchema() const {
         front_text      TEXT    NOT NULL,
         front_norm_text TEXT    NOT NULL,
         back_text       TEXT    NOT NULL,
+        back_norm_text  TEXT    NOT NULL,
         audio_path      TEXT    NOT NULL,
         image_path      TEXT,
 

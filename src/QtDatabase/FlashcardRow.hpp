@@ -16,6 +16,7 @@ struct FlashcardRow {
     std::string                FrontText;
     std::string                FrontNormText;
     std::string                BackText;
+    std::string                BackNormText;
     std::string                AudioPath;
     std::optional<std::string> ImagePath;
 };
