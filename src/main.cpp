@@ -1,27 +1,18 @@
 #include <QGuiApplication>
-// #include <cstdlib>
-// #include <stdexcept>
 
-#include "database_qt/DatabaseQt.hpp"
-#include "gui/App.hpp"
-#include "repository/DeckStore.hpp"
-#include "repository/SettingsStore.hpp"
+#include "QtGui/AppEngine.hpp"
 
 int main(int argc, char* argv[]) {
-    QGuiApplication app(argc, argv);
-    std::string     name = "RepetitionAI";
-    app.setApplicationDisplayName(name.c_str());
-    app.setApplicationName(name.c_str());
+    QGuiApplication App(argc, argv);
+    std::string     AppName = "RepetitionAI";
+    App.setApplicationDisplayName(AppName.c_str());
+    App.setApplicationName(AppName.c_str());
 
     try {
-        App gui;
-        if (!gui.Init())
+        AppEngine Engine;
+        if (!Engine.Init())
             return EXIT_FAILURE;
-        DatabaseQt    db;
-        SettingsStore ss(db);
-        // CardStore     cs;
-        DeckStore ds(db);
-        return app.exec();
+        return App.exec();
     } catch (const std::runtime_error& e) {
         qCritical() << "Fatal error: " << e.what();
         return EXIT_FAILURE;

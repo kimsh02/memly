@@ -1,8 +1,8 @@
-#include "gui/App.hpp"
+#include "AppEngine.hpp"
 
 #include <QCoreApplication>
 
-bool App::Init(const QUrl& MainUrl) {
+bool AppEngine::Init(const QUrl& MainUrl) {
     QObject::connect(
         &m_Engine,
         &QQmlApplicationEngine::objectCreated,

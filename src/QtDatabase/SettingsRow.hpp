@@ -7,5 +7,5 @@ struct SettingsRow {
 
     std::size_t TargetLangIdx;
 
-    std::string Name;
+    std::string Username;
 };

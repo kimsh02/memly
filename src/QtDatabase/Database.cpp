@@ -1,7 +1,7 @@
-#include "database_qt/DatabaseQt.hpp"
+#include "Database.hpp"
 
-#include "gui/Paths.hpp"
-#include "util/Util.hpp"
+#include "Common/Utility.hpp"
+#include "QtGui/Paths.hpp"
 
 DatabaseQt::DatabaseQt() {
     m_Db = QSqlDatabase::addDatabase("QSQLITE");
