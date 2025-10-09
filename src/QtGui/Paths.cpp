@@ -12,7 +12,7 @@ QString Paths::AppDataDir() {
     return EnsureDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
 }
 
-QString Paths::DatabaseFile() { return AppDataDir() + "/repetition.db"; }
+QString Paths::DatabaseFile() { return AppDataDir() + "/memly.db"; }
 
 QString Paths::AudioDir() { return EnsureDir(AppDataDir() + "/audio"); }
 

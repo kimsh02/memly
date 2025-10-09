@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
-project(repetition-ai LANGUAGES C CXX)
+project(memly LANGUAGES C CXX)
 
 # ------------------------ Compile DB ------------------------------------------
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -40,45 +40,45 @@ set(ALL_SOURCES
 )
 
 # ------------------------ App Target ------------------------------------------
-qt_add_executable(repetition-ai
+qt_add_executable(memly
   MANUAL_FINALIZATION
   ${ALL_SOURCES}
 )
 
 # QML and Assets
-qt_add_resources(repetition-ai "Qml"
+qt_add_resources(memly "Qml"
   PREFIX "/Qml"
   BASE "${CMAKE_SOURCE_DIR}/src/QtGui/Qml"
   FILES ${QT_QML}
 )
-qt_add_resources(repetition-ai "Assets"
+qt_add_resources(memly "Assets"
   PREFIX "/Assets"
   BASE "${CMAKE_SOURCE_DIR}/src/QtGui/Assets"
   FILES ${QT_ASSETS}
 )
 
 # Include root one level up (src)
-target_include_directories(repetition-ai PRIVATE
+target_include_directories(memly PRIVATE
   "${CMAKE_SOURCE_DIR}/src"
 )
 
 # ------------------------ C++ standard ----------------------------------------
-target_compile_features(repetition-ai PUBLIC cxx_std_23)
-set_target_properties(repetition-ai PROPERTIES
+target_compile_features(memly PUBLIC cxx_std_23)
+set_target_properties(memly PROPERTIES
   CXX_STANDARD_REQUIRED ON
   CXX_EXTENSIONS OFF
 )
 
 # ------------------------ Warnings (global) -----------------------------------
-target_compile_options(repetition-ai PRIVATE -Wall -Wextra -Wunused -pedantic -Werror)
+target_compile_options(memly PRIVATE -Wall -Wextra -Wunused -pedantic -Werror)
 
 # ------------------------ Link ------------------------------------------------
-target_link_libraries(repetition-ai PRIVATE
+target_link_libraries(memly PRIVATE
   Qt6::Quick Qt6::Qml Qt6::Network Qt6::Core Qt6::Sql
 )
 
-qt_import_qml_plugins(repetition-ai)
-qt_finalize_executable(repetition-ai)
+qt_import_qml_plugins(memly)
+qt_finalize_executable(memly)
 
 # ======================== Tests: CTest + GoogleTest ===========================
 include(CTest)
@@ -97,22 +97,22 @@ set(CORE_SOURCES
   ${TS_CPP}
 )
 
-add_executable(repetition-ai-test
+add_executable(test-memly
   ${CORE_SOURCES}
   ${TEST_SOURCES}
 )
 
-target_include_directories(repetition-ai-test PRIVATE
+target_include_directories(test-memly PRIVATE
   "${CMAKE_SOURCE_DIR}/src"
 )
 
-target_compile_features(repetition-ai-test PUBLIC cxx_std_23)
-target_compile_options(repetition-ai-test PRIVATE -Wall -Wextra -Wunused -pedantic -Werror)
+target_compile_features(test-memly PUBLIC cxx_std_23)
+target_compile_options(test-memly PRIVATE -Wall -Wextra -Wunused -pedantic -Werror)
 
-target_link_libraries(repetition-ai-test PRIVATE
+target_link_libraries(test-memly PRIVATE
   GTest::gtest_main
   Qt6::Quick Qt6::Qml Qt6::Network Qt6::Core Qt6::Sql
 )
 
 # Auto-discover TEST() cases and register with CTest
-gtest_discover_tests(repetition-ai-test)
+gtest_discover_tests(test-memly)

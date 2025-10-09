@@ -1,10 +1,11 @@
 #include <QGuiApplication>
 
+#include "QtDatabase/Database.hpp"
 #include "QtGui/AppEngine.hpp"
 
 int main(int argc, char* argv[]) {
     QGuiApplication App(argc, argv);
-    std::string     AppName = "RepetitionAI";
+    std::string     AppName = "Memly";
     App.setApplicationDisplayName(AppName.c_str());
     App.setApplicationName(AppName.c_str());
 
@@ -12,6 +13,9 @@ int main(int argc, char* argv[]) {
         AppEngine Engine;
         if (!Engine.Init())
             return EXIT_FAILURE;
+
+        DatabaseQt DbQt; // Placeholder
+
         return App.exec();
     } catch (const std::runtime_error& e) {
         qCritical() << "Fatal error: " << e.what();

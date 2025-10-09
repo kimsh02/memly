@@ -79,7 +79,8 @@ void DatabaseQt::EnsureSchema() const {
       UPDATE decks SET card_count = card_count - 1 WHERE id = OLD.deck_id;
     END;)");
 
-    Exec(R"(CREATE TRIGGER IF NOT EXISTS trg_cards_update_deck AFTER UPDATE OF deck_id ON cards
+    Exec(
+        R"(CREATE TRIGGER IF NOT EXISTS trg_cards_update_deck AFTER UPDATE OF deck_id ON cards
     BEGIN
       UPDATE decks SET card_count = card_count - 1 WHERE id = OLD.deck_id;
       UPDATE decks SET card_count = card_count + 1 WHERE id = NEW.deck_id;

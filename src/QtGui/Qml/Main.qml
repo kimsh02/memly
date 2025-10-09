@@ -6,7 +6,7 @@ Window {
     minimumWidth: 400
     minimumHeight: 90
     visible: true
-    title: "RepetitionAI"
+    title: "Memly"
     Rectangle {
         anchors.fill: parent
         color: "#121212"
