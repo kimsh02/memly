@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QtSql>
+#include <expected>
 
 class DatabaseQt final {
 public:
@@ -47,11 +48,13 @@ public:
             return *this;
         }
 
-        void Exec();
+        std::expected<void, std::string> Exec();
 
         [[nodiscard]] bool Next() noexcept { return m_Query.next(); }
 
-        [[nodiscard]] QVariant Value(std::size_t I) const { return m_Query.value(I); };
+        [[nodiscard]] QVariant Value(std::size_t I) const {
+            return m_Query.value(I);
+        };
 
         // [[nodiscard]] Stmt&& BindValue(std::size_t i, const QVariant& qv) noexcept {
         //     m_Query.bindValue(i, qv);
@@ -72,9 +75,13 @@ public:
         explicit Stmt(QSqlQuery&& Q) noexcept
             : m_Query(std::move(Q)) {}
 
-        static QVariant ToVariant(const std::string& S) { return QVariant(QString(S.c_str())); }
+        static QVariant ToVariant(const std::string& S) {
+            return QVariant(QString(S.c_str()));
+        }
 
-        static QVariant ToVariant(std::size_t V) { return QVariant(qulonglong(V)); }
+        static QVariant ToVariant(std::size_t V) {
+            return QVariant(qulonglong(V));
+        }
     };
 
     [[nodiscard]] Stmt Prepare(const char* Sql) const;

@@ -8,7 +8,8 @@ DatabaseQt::DatabaseQt() {
     m_Db.setDatabaseName(Paths::DatabaseFile());
 
     if (!m_Db.open()) {
-        throw std::runtime_error(m_Db.lastError().text().toStdString());
+        // Database connection must not fail to open.
+        Fatal(m_Db.lastError().text().toStdString());
     }
 
     Exec("PRAGMA user_version=1;");
@@ -25,6 +26,7 @@ DatabaseQt::~DatabaseQt() { m_Db.close(); }
 void DatabaseQt::Exec(const char* Sql) const {
     QSqlQuery Query(m_Db);
     if (!Query.exec(Sql)) {
+        // Database startup SQL must not fail to execute.
         Fatal(Query.lastError().text().toStdString());
     }
 }
@@ -32,6 +34,7 @@ void DatabaseQt::Exec(const char* Sql) const {
 [[nodiscard]] DatabaseQt::Stmt DatabaseQt::Prepare(const char* Sql) const {
     QSqlQuery Query(m_Db);
     if (!Query.prepare(Sql)) {
+        // Prepared statement SQL must not be malformed.
         Fatal(Query.lastError().text().toStdString());
     }
     return Stmt(std::move(Query));
@@ -87,8 +90,9 @@ void DatabaseQt::EnsureSchema() const {
     END;)");
 }
 
-void DatabaseQt::Stmt::Exec() {
+std::expected<void, std::string> DatabaseQt::Stmt::Exec() {
     if (!m_Query.exec()) {
-        Fatal(m_Query.lastError().text().toStdString());
+        return std::unexpected(m_Query.lastError().text().toStdString());
     }
+    return {};
 }
