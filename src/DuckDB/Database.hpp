@@ -12,6 +12,12 @@ public:
 
     Database();
 
+    void BeginTransaction() { m_Connection.Query("BEGIN TRANSACTION"); }
+
+    void CommitTransaction() { m_Connection.Query("COMMIT"); }
+
+    void RollbackTransaction() { m_Connection.Query("ROLLBACK"); }
+
     // class PreparedStatement {
     // public:
     //     PreparedStatement(const PreparedStatement&)            = delete;
@@ -84,5 +90,5 @@ private:
 
     // void Exec(const char* Sql) const;
 
-    // void EnsureSchema() const;
+    void EnsureSchema() const;
 };

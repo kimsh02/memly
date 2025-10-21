@@ -2,7 +2,9 @@
 
 #include <QCoreApplication>
 
-bool AppEngine::Init(const QUrl& MainUrl) {
+#include "Common/Utility.hpp"
+
+void AppEngine::Init(const QUrl& MainUrl) {
     QObject::connect(
         &m_Engine,
         &QQmlApplicationEngine::objectCreated,
@@ -14,5 +16,7 @@ bool AppEngine::Init(const QUrl& MainUrl) {
         Qt::QueuedConnection);
 
     m_Engine.load(MainUrl);
-    return !m_Engine.rootObjects().isEmpty();
+    if (m_Engine.rootObjects().isEmpty()) {
+        Utility::Fatal("AppEngine failed to start.");
+    };
 }

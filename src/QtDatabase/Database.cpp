@@ -9,7 +9,7 @@ DatabaseQt::DatabaseQt() {
 
     if (!m_Db.open()) {
         // Database connection must not fail to open.
-        Fatal(m_Db.lastError().text().toStdString());
+        Utility::Fatal(m_Db.lastError().text().toStdString());
     }
 
     Exec("PRAGMA user_version=1;");
@@ -27,7 +27,7 @@ void DatabaseQt::Exec(const char* Sql) const {
     QSqlQuery Query(m_Db);
     if (!Query.exec(Sql)) {
         // Database startup SQL must not fail to execute.
-        Fatal(Query.lastError().text().toStdString());
+        Utility::Fatal(Query.lastError().text().toStdString());
     }
 }
 
@@ -35,7 +35,7 @@ void DatabaseQt::Exec(const char* Sql) const {
     QSqlQuery Query(m_Db);
     if (!Query.prepare(Sql)) {
         // Prepared statement SQL must not be malformed.
-        Fatal(Query.lastError().text().toStdString());
+        Utility::Fatal(Query.lastError().text().toStdString());
     }
     return Stmt(std::move(Query));
 }
