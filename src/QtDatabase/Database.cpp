@@ -1,11 +1,11 @@
 #include "Database.hpp"
 
+#include "Common/Paths.hpp"
 #include "Common/Utility.hpp"
-#include "QtGui/Paths.hpp"
 
 DatabaseQt::DatabaseQt() {
     m_Db = QSqlDatabase::addDatabase("QSQLITE");
-    m_Db.setDatabaseName(Paths::DatabaseFile());
+    m_Db.setDatabaseName(Paths::DatabaseFile().c_str());
 
     if (!m_Db.open()) {
         // Database connection must not fail to open.

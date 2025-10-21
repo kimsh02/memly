@@ -1,6 +1,6 @@
 #include <QGuiApplication>
 
-#include "QtDatabase/Database.hpp"
+#include "DuckDB/Database.hpp"
 #include "QtGui/AppEngine.hpp"
 
 int main(int argc, char* argv[]) {
@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
         if (!Engine.Init())
             return EXIT_FAILURE;
 
-        DatabaseQt DbQt; // Placeholder
+        Database Database;
 
         return App.exec();
     } catch (const std::runtime_error& e) {

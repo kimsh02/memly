@@ -20,11 +20,16 @@ file(GLOB_RECURSE QT_QML CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtGui/Qml/*.
 file(GLOB_RECURSE QT_ASSETS CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtGui/Assets/*")
 
 # QtDatabase
-file(GLOB_RECURSE DB_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtDatabase/*.cpp")
-file(GLOB_RECURSE DB_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtDatabase/*.[Hh]*")
+# file(GLOB_RECURSE DB_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtDatabase/*.cpp")
+# file(GLOB_RECURSE DB_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtDatabase/*.[Hh]*")
+
+# DuckDB
+file(GLOB_RECURSE DB_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/DuckDB/*.cpp")
+file(GLOB_RECURSE DB_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/DuckDB/*.[Hh]*")
 
 # C++
 file(GLOB_RECURSE COMMON_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Common/*.[Hh]*")
+file(GLOB_RECURSE COMMON_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Common/*.cpp")
 file(GLOB_RECURSE CORE_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Core/*.cpp")
 file(GLOB_RECURSE CORE_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Core/*.[Hh]*")
 file(GLOB_RECURSE TS_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/TransactionScripts/*.cpp")
@@ -34,6 +39,7 @@ set(ALL_SOURCES
     ${SRC_MAIN}
     ${GUI_CPP} ${GUI_HDR}
     ${DB_CPP} ${DB_HDR}
+    ${COMMON_CPP}
     ${COMMON_HDR}
     ${TS_CPP} ${TS_HDR}
     ${CORE_CPP} ${CORE_HDR}
@@ -47,6 +53,34 @@ FetchContent_Declare(
     URL_HASH SHA256=a82bde325dcbb6d1011e1014673eb288e8c1fd5f5b755d47fd245e8b37194817
 )
 FetchContent_MakeAvailable(libduckdb)
+
+# ---- Import prebuilt DuckDB dylib + headers ----
+# Try both possible layouts: files at root or under lib/ and include/
+set(_duckdb_lib "${libduckdb_SOURCE_DIR}/libduckdb.dylib")
+if(NOT EXISTS "${_duckdb_lib}")
+    set(_duckdb_lib "${libduckdb_SOURCE_DIR}/lib/libduckdb.dylib")
+endif()
+set(_duckdb_inc "${libduckdb_SOURCE_DIR}")
+if(NOT EXISTS "${_duckdb_inc}/duckdb.hpp")
+    set(_duckdb_inc "${libduckdb_SOURCE_DIR}/include")
+endif()
+
+if(NOT EXISTS "${_duckdb_lib}")
+    message(FATAL_ERROR "DuckDB dylib not found in ${libduckdb_SOURCE_DIR}")
+endif()
+if(NOT EXISTS "${_duckdb_inc}/duckdb.hpp")
+    message(FATAL_ERROR "duckdb.hpp not found in ${libduckdb_SOURCE_DIR}")
+endif()
+
+add_library(duckdb SHARED IMPORTED GLOBAL)
+set_target_properties(duckdb PROPERTIES
+    IMPORTED_LOCATION "${_duckdb_lib}"
+    INTERFACE_INCLUDE_DIRECTORIES "${_duckdb_inc}"
+)
+
+# Compute lib dir for runtime lookup from build tree
+get_filename_component(_duckdb_libdir "${_duckdb_lib}" DIRECTORY)
+set(_duckdb_rpath_dirs "${_duckdb_libdir}")
 
 # ------------------------ App Target ------------------------------------------
 qt_add_executable(memly
@@ -83,8 +117,9 @@ target_compile_options(memly PRIVATE -Wall -Wextra -Wunused -pedantic -Werror)
 
 # ------------------------ Link ------------------------------------------------
 target_link_libraries(memly PRIVATE
-    Qt6::Quick Qt6::Qml Qt6::Network Qt6::Core Qt6::Sql
+    Qt6::Quick Qt6::Qml Qt6::Network Qt6::Core Qt6::Sql duckdb
 )
+set_target_properties(memly PROPERTIES BUILD_RPATH "${_duckdb_rpath_dirs}")
 
 qt_import_qml_plugins(memly)
 qt_finalize_executable(memly)
@@ -100,6 +135,7 @@ file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/tests/*.cp
 
 # Reuse core sources but exclude main.cpp for tests
 set(CORE_SOURCES
+    ${COMMON_CPP}
     ${GUI_CPP}
     ${DB_CPP}
     ${CORE_CPP}
@@ -120,8 +156,9 @@ target_compile_options(test-memly PRIVATE -Wall -Wextra -Wunused -pedantic -Werr
 
 target_link_libraries(test-memly PRIVATE
     GTest::gtest_main
-    Qt6::Quick Qt6::Qml Qt6::Network Qt6::Core Qt6::Sql
+    Qt6::Quick Qt6::Qml Qt6::Network Qt6::Core Qt6::Sql duckdb
 )
+set_target_properties(test-memly PROPERTIES BUILD_RPATH "${_duckdb_rpath_dirs}")
 
 # Auto-discover TEST() cases and register with CTest
 gtest_discover_tests(test-memly)
