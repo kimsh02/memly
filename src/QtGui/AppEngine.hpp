@@ -4,7 +4,7 @@
 
 class AppEngine {
 public:
-    void Init(const QUrl& MainUrl = QUrl("qrc:/Qml/Main.qml"));
+    AppEngine(const QUrl& MainURL = QUrl("qrc:/Qml/Main.qml"));
 
 private:
     QQmlApplicationEngine m_Engine;

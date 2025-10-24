@@ -4,7 +4,7 @@
 
 #include "Common/Utility.hpp"
 
-void AppEngine::Init(const QUrl& MainUrl) {
+AppEngine::AppEngine(const QUrl& MainUrl) {
     QObject::connect(
         &m_Engine,
         &QQmlApplicationEngine::objectCreated,
