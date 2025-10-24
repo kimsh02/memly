@@ -27,3 +27,5 @@ private:
 
     void EnsureSchema();
 };
+
+struct DatabaseError {};
