@@ -7,7 +7,7 @@ set(QT_QML_GENERATE_QMLLS_INI ON)
 
 # ------------------------ Qt (system-wide) ------------------------------------
 set(QT_NO_PRIVATE_MODULE_WARNING ON)
-find_package(Qt6 REQUIRED COMPONENTS Quick Qml Network Core Sql)
+find_package(Qt6 REQUIRED COMPONENTS Quick Qml Network Core)
 
 # ------------------------ Sources ---------------------------------------------
 # Root main
@@ -117,7 +117,7 @@ target_compile_options(memly PRIVATE -Wall -Wextra -Wunused -pedantic -Werror)
 
 # ------------------------ Link ------------------------------------------------
 target_link_libraries(memly PRIVATE
-    Qt6::Quick Qt6::Qml Qt6::Network Qt6::Core Qt6::Sql duckdb
+    Qt6::Quick Qt6::Qml Qt6::Network Qt6::Core duckdb
 )
 set_target_properties(memly PROPERTIES BUILD_RPATH "${_duckdb_rpath_dirs}")
 
@@ -156,7 +156,7 @@ target_compile_options(test-memly PRIVATE -Wall -Wextra -Wunused -pedantic -Werr
 
 target_link_libraries(test-memly PRIVATE
     GTest::gtest_main
-    Qt6::Quick Qt6::Qml Qt6::Network Qt6::Core Qt6::Sql duckdb
+    Qt6::Quick Qt6::Qml Qt6::Network Qt6::Core duckdb
 )
 set_target_properties(test-memly PROPERTIES BUILD_RPATH "${_duckdb_rpath_dirs}")
 
