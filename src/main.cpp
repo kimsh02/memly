@@ -2,7 +2,7 @@
 
 #include "Common/Utility.hpp"
 #include "DuckDB/Database.hpp"
-#include "QtGui/AppEngine.hpp"
+#include "QtGUI/AppEngine.hpp"
 
 int main(int argc, char* argv[]) {
     try {
