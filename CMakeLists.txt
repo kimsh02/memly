@@ -13,11 +13,11 @@ find_package(Qt6 REQUIRED COMPONENTS Quick Qml Network Core Sql)
 # Root main
 file(GLOB SRC_MAIN CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/main.cpp")
 
-# QtGui
-file(GLOB_RECURSE GUI_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtGui/*.cpp")
-file(GLOB_RECURSE GUI_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtGui/*.[Hh]*")
-file(GLOB_RECURSE QT_QML CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtGui/Qml/*.qml")
-file(GLOB_RECURSE QT_ASSETS CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtGui/Assets/*")
+# QtGUI
+file(GLOB_RECURSE GUI_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtGUI/*.cpp")
+file(GLOB_RECURSE GUI_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtGUI/*.[Hh]*")
+file(GLOB_RECURSE QT_QML CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtGUI/Qml/*.qml")
+file(GLOB_RECURSE QT_ASSETS CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtGUI/Assets/*")
 
 # QtDatabase
 # file(GLOB_RECURSE DB_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtDatabase/*.cpp")
@@ -91,12 +91,12 @@ qt_add_executable(memly
 # QML and Assets
 qt_add_resources(memly "Qml"
     PREFIX "/Qml"
-    BASE "${CMAKE_SOURCE_DIR}/src/QtGui/Qml"
+    BASE "${CMAKE_SOURCE_DIR}/src/QtGUI/Qml"
     FILES ${QT_QML}
 )
 qt_add_resources(memly "Assets"
     PREFIX "/Assets"
-    BASE "${CMAKE_SOURCE_DIR}/src/QtGui/Assets"
+    BASE "${CMAKE_SOURCE_DIR}/src/QtGUI/Assets"
     FILES ${QT_ASSETS}
 )
 
