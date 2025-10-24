@@ -17,6 +17,6 @@ int main(int argc, char* argv[]) {
 
         return App.exec();
     } catch (const std::exception& Exception) {
-        Utility::FatalLogAndExit(Exception.what());
+        Utility::LogAndExit(Exception.what());
     }
 }

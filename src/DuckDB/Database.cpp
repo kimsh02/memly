@@ -14,6 +14,6 @@ Database::PrepareStatement(const std::string& Sql) {
     try {
         return m_Connection.Prepare(Sql);
     } catch (const std::exception& Exception) {
-        Utility::FatalLogAndExit(Exception.what());
+        Utility::LogAndExit(Exception.what());
     }
 }

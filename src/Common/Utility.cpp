@@ -2,8 +2,8 @@
 
 #include <QtGlobal>
 
-[[noreturn]] void Utility::FatalLogAndExit(const std::string&          Msg,
-                                           const std::source_location& Loc) {
+[[noreturn]] void Utility::LogAndExit(const std::string&          Msg,
+                                      const std::source_location& Loc) {
     qFatal("%s:%u in %s: %s",
            Loc.file_name(),
            Loc.line(),
