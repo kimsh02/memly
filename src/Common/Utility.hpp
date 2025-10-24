@@ -5,9 +5,9 @@
 #include <string>
 
 namespace Utility {
-[[noreturn]] inline void
-Fatal(const std::string&         Msg,
-      const std::source_location Loc = std::source_location::current()) {
+[[noreturn]] inline void FatalLogAndExit(
+    const std::string&         Msg,
+    const std::source_location Loc = std::source_location::current()) {
     qFatal("%s:%u in %s: %s",
            Loc.file_name(),
            Loc.line(),

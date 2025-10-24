@@ -16,5 +16,7 @@ int main(int argc, char* argv[]) {
         Database Database; // TODO
 
         return App.exec();
-    } catch (const std::runtime_error& Error) { Utility::Fatal(Error.what()); }
+    } catch (const std::exception& Exception) {
+        Utility::FatalLogAndExit(Exception.what());
+    }
 }
