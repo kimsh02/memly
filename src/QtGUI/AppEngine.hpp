@@ -2,7 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QUrl>
 
-#include "Common/Paths.hpp"
+#include "Common/Files.hpp"
 
 class AppEngine {
 public:

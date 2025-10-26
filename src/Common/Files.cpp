@@ -1,17 +1,17 @@
-#include "Paths.hpp"
+#include "Files.hpp"
 
 #include <QDir>
 #include <QStandardPaths>
 
 #include "Common/Utility.hpp"
 
-static std::string EnsureDir(const std::string& Dir) {
-    QDir().mkpath(Dir.c_str());
-    return Dir;
+static std::string EnsureDirectory(const std::string& Directory) {
+    QDir().mkpath(Directory.c_str());
+    return Directory;
 }
 
 std::string AppData::AppDataDirectory() {
-    return EnsureDir(
+    return EnsureDirectory(
         QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
             .toStdString());
 }
@@ -21,20 +21,24 @@ std::string AppData::DatabaseFile() {
 }
 
 std::string AppData::AudioDirectory() {
-    return EnsureDir(AppDataDirectory() + "/Audio");
+    return EnsureDirectory(AppDataDirectory() + "/Audio");
 }
 
 std::string AppData::ImagesDirectory() {
-    return EnsureDir(AppDataDirectory() + "/Images");
+    return EnsureDirectory(AppDataDirectory() + "/Images");
 }
 
 std::string AppResources::QMLMainURL() {
     return std::string{ "qrc:/QML/Main.qml" };
 }
 
-std::string AppResources::SQLSchema() {
-    QFile File("qrc:/DuckDB/SQL/Schema.sql");
+static std::string SQLString(const std::string& Qrc) {
+    QFile File(Qrc.c_str());
     if (!File.open(QIODevice::ReadOnly | QIODevice::Text))
         Utility::LogAndExit();
     return QTextStream(&File).readAll().toStdString();
+}
+
+std::string AppResources::SQLSchema() {
+    return SQLString(":/DuckDB/SQL/Schema.sql");
 }

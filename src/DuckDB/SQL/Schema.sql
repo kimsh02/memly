@@ -1,5 +1,10 @@
 BEGIN TRANSACTION;
 
+CREATE TABLE IF NOT EXISTS schema_migrations (
+  version    BIGINT PRIMARY KEY,
+  applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS settings (
   id               UUID PRIMARY KEY DEFAULT uuidv7(),
   target_lang_idx  INTEGER NOT NULL,
@@ -14,9 +19,9 @@ CREATE TABLE IF NOT EXISTS decks (
 CREATE TABLE IF NOT EXISTS cards (
   id               UUID PRIMARY KEY DEFAULT uuidv7(),
   deck_id          UUID NOT NULL REFERENCES decks(id),
-  created_at       VARCHAR NOT NULL,
-  updated_at       VARCHAR,
-  reviewed_at      VARCHAR,
+  created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at       TIMESTAMP,
+  reviewed_at      TIMESTAMP,
 
   difficulty       DOUBLE NOT NULL,
   stability        DOUBLE NOT NULL,

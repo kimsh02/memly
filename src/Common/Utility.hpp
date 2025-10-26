@@ -5,6 +5,6 @@
 
 namespace Utility {
 [[noreturn]] void
-LogAndExit(const std::string&          = std::string{},
+LogAndExit(const std::string&          = std::string{ "Error" },
            const std::source_location& = std::source_location::current());
 }
