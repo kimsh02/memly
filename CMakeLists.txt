@@ -16,16 +16,17 @@ file(GLOB SRC_MAIN CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/main.cpp")
 # QtGUI
 file(GLOB_RECURSE GUI_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtGUI/*.cpp")
 file(GLOB_RECURSE GUI_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtGUI/*.[Hh]*")
-file(GLOB_RECURSE QT_QML CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtGUI/Qml/*.qml")
+file(GLOB_RECURSE QT_QML CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtGUI/QML/*.qml")
 file(GLOB_RECURSE QT_ASSETS CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtGUI/Assets/*")
-
-# QtDatabase
-# file(GLOB_RECURSE DB_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtDatabase/*.cpp")
-# file(GLOB_RECURSE DB_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtDatabase/*.[Hh]*")
 
 # DuckDB
 file(GLOB_RECURSE DB_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/DuckDB/*.cpp")
 file(GLOB_RECURSE DB_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/DuckDB/*.[Hh]*")
+
+# SQL
+file(GLOB SQL_FILES CONFIGURE_DEPENDS
+    "${CMAKE_SOURCE_DIR}/src/DuckDB/SQL/*.sql"
+    "${CMAKE_SOURCE_DIR}/src/TransactionScripts/SQL/*.sql")
 
 # C++
 file(GLOB_RECURSE COMMON_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Common/*.[Hh]*")
@@ -89,8 +90,8 @@ qt_add_executable(memly
 )
 
 # QML and Assets
-qt_add_resources(memly "Qml"
-    PREFIX "/Qml"
+qt_add_resources(memly "QML"
+    PREFIX "/QML"
     BASE "${CMAKE_SOURCE_DIR}/src/QtGUI/Qml"
     FILES ${QT_QML}
 )
@@ -98,6 +99,11 @@ qt_add_resources(memly "Assets"
     PREFIX "/Assets"
     BASE "${CMAKE_SOURCE_DIR}/src/QtGUI/Assets"
     FILES ${QT_ASSETS}
+)
+qt_add_resources(memly "SQL"
+    PREFIX "/"
+    BASE "${CMAKE_SOURCE_DIR}/src"
+    FILES ${SQL_FILES}
 )
 
 # Include root one level up (src)

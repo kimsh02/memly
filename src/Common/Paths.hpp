@@ -2,9 +2,14 @@
 
 #include <string>
 
-namespace Paths {
-std::string AppDataDir();
+namespace AppData {
+std::string AppDataDirectory();
 std::string DatabaseFile();
-std::string AudioDir();
-std::string ImagesDir();
+std::string AudioDirectory();
+std::string ImagesDirectory();
+}
+
+namespace AppResources {
+std::string QMLMainURL();
+std::string SQLSchema();
 }

@@ -2,6 +2,8 @@
 
 #include <duckdb.hpp>
 
+#include <filesystem>
+
 class Database {
 public:
     Database(const Database&)          = delete;
@@ -12,11 +14,11 @@ public:
 
     Database();
 
-    void BeginTransaction() { m_Connection.Query("BEGIN TRANSACTION"); }
+    // void BeginTransaction() { m_Connection.Query("BEGIN TRANSACTION"); }
 
-    void CommitTransaction() { m_Connection.Query("COMMIT"); }
+    // void CommitTransaction() { m_Connection.Query("COMMIT"); }
 
-    void RollbackTransaction() { m_Connection.Query("ROLLBACK"); }
+    // void RollbackTransaction() { m_Connection.Query("ROLLBACK"); }
 
     [[nodiscard]] std::unique_ptr<duckdb::PreparedStatement>
     PrepareStatement(const std::string& Sql);
@@ -25,7 +27,11 @@ private:
     duckdb::DuckDB     m_Database;
     duckdb::Connection m_Connection;
 
+    static constexpr std::filesystem::path Path();
+
     void EnsureSchema();
+
+    void Query();
 };
 
 struct DatabaseError {};

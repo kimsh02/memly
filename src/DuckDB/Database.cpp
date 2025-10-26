@@ -4,7 +4,7 @@
 #include "Common/Utility.hpp"
 
 Database::Database()
-    : m_Database(Paths::DatabaseFile())
+    : m_Database(AppData::DatabaseFile())
     , m_Connection(m_Database) {}
 
 void Database::EnsureSchema() {}
