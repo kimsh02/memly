@@ -14,12 +14,6 @@ public:
 
     Database();
 
-    // void BeginTransaction() { m_Connection.Query("BEGIN TRANSACTION"); }
-
-    // void CommitTransaction() { m_Connection.Query("COMMIT"); }
-
-    // void RollbackTransaction() { m_Connection.Query("ROLLBACK"); }
-
     [[nodiscard]] std::unique_ptr<duckdb::PreparedStatement>
     PrepareStatement(const std::string& Sql);
 

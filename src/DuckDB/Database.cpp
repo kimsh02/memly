@@ -9,6 +9,8 @@ Database::Database()
     : m_Database(AppData::DatabaseFile())
     , m_Connection(m_Database) {
     EnsureSchema();
+
+    // TODO: Append to schema_migrations table
 }
 
 void Database::EnsureSchema() {
