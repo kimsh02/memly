@@ -2,8 +2,6 @@
 
 #include <duckdb.hpp>
 
-#include <filesystem>
-
 class Database {
 public:
     Database(const Database&)          = delete;
@@ -23,9 +21,9 @@ private:
     duckdb::DuckDB     m_Database;
     duckdb::Connection m_Connection;
 
-    static constexpr std::filesystem::path Path();
-
     void EnsureSchema();
+
+    void ExecuteQuery();
 };
 
 struct DatabaseError {};
