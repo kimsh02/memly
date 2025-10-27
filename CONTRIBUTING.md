@@ -1,3 +1,3 @@
 # Contributing to Memly
 
-All contributions and feedback are welcome!
+All feedback, ideas, and contributions are welcome!
