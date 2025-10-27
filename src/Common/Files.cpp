@@ -34,8 +34,9 @@ std::string AppResources::QMLMainURL() {
 
 static std::string SQLString(const std::string& Qrc) {
     QFile File(Qrc.c_str());
-    if (!File.open(QIODevice::ReadOnly | QIODevice::Text))
+    if (!File.open(QIODevice::ReadOnly | QIODevice::Text)) {
         Utility::LogAndExit();
+    }
     return QTextStream(&File).readAll().toStdString();
 }
 
