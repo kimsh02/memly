@@ -13,12 +13,14 @@ Database::Database()
     // TODO: Append to schema_migrations table
 }
 
-void Database::EnsureSchema() {
+void Database::Query(const std::string& Sql) {
     std::unique_ptr<duckdb::MaterializedQueryResult> Result =
-        m_Connection.Query(AppResources::SQLSchema());
+        m_Connection.Query(Sql);
     if (Result->HasError())
         Utility::LogAndExit(Result->GetError());
 }
+
+void Database::EnsureSchema() { Query(AppResources::SQLSchema()); }
 
 [[nodiscard]] std::unique_ptr<duckdb::PreparedStatement>
 Database::PrepareStatement(const std::string& Sql) {

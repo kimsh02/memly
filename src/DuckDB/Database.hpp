@@ -15,15 +15,14 @@ public:
     [[nodiscard]] std::unique_ptr<duckdb::PreparedStatement>
     PrepareStatement(const std::string& Sql);
 
-    class PreparedStatemet {};
+    class PreparedStatement {};
 
 private:
     duckdb::DuckDB     m_Database;
     duckdb::Connection m_Connection;
 
+    void Query(const std::string&);
     void EnsureSchema();
-
-    void ExecuteQuery();
 };
 
 struct DatabaseError {};

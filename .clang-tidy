@@ -1,0 +1,14 @@
+Checks: >
+  -*,
+  readability-implicit-bool-conversion,
+  readability-isolate-declaration
+WarningsAsErrors: "*"
+CheckOptions:
+  - {
+      key: readability-implicit-bool-conversion.AllowIntegerConditions,
+      value: "false",
+    }
+  - {
+      key: readability-implicit-bool-conversion.AllowPointerConditions,
+      value: "false",
+    }
