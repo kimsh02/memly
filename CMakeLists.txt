@@ -1,22 +1,25 @@
 cmake_minimum_required(VERSION 3.25)
-project(memly LANGUAGES C CXX)
+project(memly LANGUAGES CXX)
 
-# ------------------------ Compile DB ------------------------------------------
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(QT_QML_GENERATE_QMLLS_INI ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
-# ------------------------ Qt (system-wide) ------------------------------------
-set(QT_NO_PRIVATE_MODULE_WARNING ON)
 find_package(Qt6 REQUIRED COMPONENTS Quick Qml Network Core)
 
-# ------------------------ Sources ---------------------------------------------
 # Root main
 file(GLOB SRC_MAIN CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/main.cpp")
 
 # QtGUI
 file(GLOB_RECURSE GUI_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtGUI/*.cpp")
 file(GLOB_RECURSE GUI_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtGUI/*.[Hh]*")
-file(GLOB_RECURSE QT_QML CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtGUI/QML/*.qml")
+
+# QML files
+set(QML_DIR "${CMAKE_SOURCE_DIR}/src/QtGUI/QML")
+file(GLOB_RECURSE QT_QML CONFIGURE_DEPENDS "${QML_DIR}/*.qml")
+foreach(_qml IN LISTS QT_QML)
+    file(RELATIVE_PATH _rel "${QML_DIR}" "${_qml}")
+    set_source_files_properties("${_qml}" PROPERTIES QT_RESOURCE_ALIAS "${_rel}")
+endforeach()
 file(GLOB_RECURSE QT_ASSETS CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtGUI/Assets/*")
 
 # DuckDB
@@ -40,8 +43,7 @@ set(ALL_SOURCES
     ${SRC_MAIN}
     ${GUI_CPP} ${GUI_HDR}
     ${DB_CPP} ${DB_HDR}
-    ${COMMON_CPP}
-    ${COMMON_HDR}
+    ${COMMON_CPP} ${COMMON_HDR}
     ${TS_CPP} ${TS_HDR}
     ${CORE_CPP} ${CORE_HDR}
 )
@@ -55,8 +57,6 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(libduckdb)
 
-# ---- Import prebuilt DuckDB dylib + headers ----
-# Try both possible layouts: files at root or under lib/ and include/
 set(_duckdb_lib "${libduckdb_SOURCE_DIR}/libduckdb.dylib")
 if(NOT EXISTS "${_duckdb_lib}")
     set(_duckdb_lib "${libduckdb_SOURCE_DIR}/lib/libduckdb.dylib")
@@ -79,49 +79,42 @@ set_target_properties(duckdb PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${_duckdb_inc}"
 )
 
-# Compute lib dir for runtime lookup from build tree
 get_filename_component(_duckdb_libdir "${_duckdb_lib}" DIRECTORY)
 set(_duckdb_rpath_dirs "${_duckdb_libdir}")
 
-# ------------------------ App Target ------------------------------------------
 qt_add_executable(memly
     MANUAL_FINALIZATION
     ${ALL_SOURCES}
 )
 
-# QML and Assets
-qt_add_resources(memly "QML"
-    PREFIX "/QML"
-    BASE "${CMAKE_SOURCE_DIR}/src/QtGUI/Qml"
-    FILES ${QT_QML}
+qt_policy(SET QTP0004 NEW)
+qt_add_qml_module(memly
+    URI memly.QML
+    VERSION 1.0
+    RESOURCE_PREFIX "/"
+    QML_FILES ${QT_QML}
 )
 qt_add_resources(memly "Assets"
-    PREFIX "/Assets"
-    BASE "${CMAKE_SOURCE_DIR}/src/QtGUI/Assets"
+    PREFIX "/memly"
+    BASE "${CMAKE_SOURCE_DIR}/src"
     FILES ${QT_ASSETS}
 )
 qt_add_resources(memly "SQL"
-    PREFIX "/"
+    PREFIX "/memly"
     BASE "${CMAKE_SOURCE_DIR}/src"
     FILES ${SQL_FILES}
 )
 
-# Include root one level up (src)
-target_include_directories(memly PRIVATE
-    "${CMAKE_SOURCE_DIR}/src"
-)
+target_include_directories(memly PRIVATE "${CMAKE_SOURCE_DIR}/src")
 
-# ------------------------ C++ standard ----------------------------------------
 target_compile_features(memly PUBLIC cxx_std_23)
 set_target_properties(memly PROPERTIES
     CXX_STANDARD_REQUIRED ON
     CXX_EXTENSIONS OFF
 )
 
-# ------------------------ Warnings (global) -----------------------------------
 target_compile_options(memly PRIVATE -Wall -Wextra -Wunused -pedantic -Werror)
 
-# ------------------------ Link ------------------------------------------------
 target_link_libraries(memly PRIVATE
     Qt6::Quick Qt6::Qml Qt6::Network Qt6::Core duckdb
 )
@@ -132,14 +125,11 @@ qt_finalize_executable(memly)
 
 # ======================== Tests: CTest + GoogleTest ===========================
 include(CTest)
-
 find_package(GTest CONFIG REQUIRED)
 include(GoogleTest)
 
-# Collect test sources
 file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/tests/*.cpp")
 
-# Reuse core sources but exclude main.cpp for tests
 set(CORE_SOURCES
     ${COMMON_CPP}
     ${GUI_CPP}
@@ -153,10 +143,7 @@ add_executable(test-memly
     ${TEST_SOURCES}
 )
 
-target_include_directories(test-memly PRIVATE
-    "${CMAKE_SOURCE_DIR}/src"
-)
-
+target_include_directories(test-memly PRIVATE "${CMAKE_SOURCE_DIR}/src")
 target_compile_features(test-memly PUBLIC cxx_std_23)
 target_compile_options(test-memly PRIVATE -Wall -Wextra -Wunused -pedantic -Werror)
 
@@ -166,5 +153,4 @@ target_link_libraries(test-memly PRIVATE
 )
 set_target_properties(test-memly PROPERTIES BUILD_RPATH "${_duckdb_rpath_dirs}")
 
-# Auto-discover TEST() cases and register with CTest
 gtest_discover_tests(test-memly)
