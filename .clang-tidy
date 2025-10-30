@@ -1,7 +1,8 @@
 Checks: >
   -*,
   readability-implicit-bool-conversion,
-  readability-isolate-declaration
+  readability-isolate-declaration,
+  readability-braces-around-statements
 WarningsAsErrors: "*"
 CheckOptions:
   - {
@@ -11,4 +12,8 @@ CheckOptions:
   - {
       key: readability-implicit-bool-conversion.AllowPointerConditions,
       value: "false",
+    }
+  - {
+      key: readability-braces-around-statements.ShortStatementLines,
+      value: "0",
     }
