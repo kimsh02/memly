@@ -1,0 +1,108 @@
+# Build artifacts
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+CTestTestfile.cmake
+install_manifest.txt
+compile_commands.json
+build
+
+# Compiled binaries and libraries
+*.o
+*.lo
+*.la
+*.a
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exe
+*.out
+*.app
+*.pch
+*.obj
+*.pdb
+*.lib
+
+# Temporary and backup files
+*.swp
+*.swo
+*.bak
+*.tmp
+*.DS_Store
+
+# Logs and debug files
+*.log
+*.stackdump
+
+# IDE and editor specific files
+.vscode
+.idea
+*.code-workspace
+*.clangd
+.clangd
+CMakeUserPresets.json
+
+# Generated documentation
+/docs/doxygen/
+
+# If using Conan or vcpkg package managers
+.conan/
+vcpkg_installed/
+vcpkg/
+.cache
+
+# Emacs backup and autosave files
+*~
+\#*\#
+.\#*
+
+# Emacs lock files
+*.lock
+
+# Emacs auto-save list
+.tramp
+
+# Emacs project-related files
+.projectile
+.dir-locals.el
+
+# LaTeX intermediate and output files
+*.aux
+*.bbl
+*.blg
+*.brf
+*.log
+*.lof
+*.lot
+*.fls
+*.out
+*.toc
+*.fdb_latexmk
+*.synctex.gz
+*.nav
+*.snm
+*.vrb
+
+# Editor backup files
+*~
+*.swp
+*.bak
+*.tmp
+
+# Microsoft Office Files
+~$*
+
+# Ninja (generic)
+.ninja_deps
+.ninja_log
+*.ninja
+
+# If build files are generated (e.g., CMake, Meson, GN):
+build.ninja
+
+# Common build directories (adjust to your project)
+output/
+
+.qmlls.ini
