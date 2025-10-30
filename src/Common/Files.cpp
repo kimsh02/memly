@@ -29,7 +29,7 @@ std::string AppData::ImagesDirectory() {
 }
 
 std::string AppResources::QMLMainURL() {
-    return std::string{ "qrc:/QML/Main.qml" };
+    return std::string("qrc:/memly/QML/Main.qml");
 }
 
 static std::string SQLString(const std::string& Qrc) {
@@ -41,5 +41,5 @@ static std::string SQLString(const std::string& Qrc) {
 }
 
 std::string AppResources::SQLSchema() {
-    return SQLString(":/DuckDB/SQL/Schema.sql");
+    return SQLString(":/memly/DuckDB/SQL/Schema.sql");
 }
