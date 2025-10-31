@@ -23,7 +23,9 @@ Database::Query(const std::string& Sql) {
     return Result;
 }
 
-void Database::EnsureSchema() { Query(AppResources::SQLSchema()); }
+void Database::EnsureSchema() {
+    Query(AppResources::SQLSchema());
+}
 
 [[nodiscard]] Database::PreparedStatement
 Database::PrepareStatement(const std::string& Sql) {

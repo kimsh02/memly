@@ -9,7 +9,8 @@ struct DomainError {
 
     DomainError(FieldType Field, std::string_view Message)
         : Field(Field)
-        , Message(Message) {}
+        , Message(Message) {
+    }
 };
 
 template <typename FieldType>

@@ -12,7 +12,9 @@ public:
     LanguageTranslator(LanguageTranslator&&)                 = delete;
     LanguageTranslator& operator=(LanguageTranslator&&)      = delete;
 
-    explicit LanguageTranslator() noexcept { LoadLastTargetIndex(); }
+    explicit LanguageTranslator() noexcept {
+        LoadLastTargetIndex();
+    }
 
     [[nodiscard]] std::span<const std::string_view>
     GetLatinLangNames() const noexcept {

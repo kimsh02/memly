@@ -17,8 +17,6 @@
 //         return &m_SettingsCache.at(Default::s_UserId).Settings;
 //     }
 
-
-
 //     using UserVResult = Types::VResult<UserField>;
 
 //     [[nodiscard]] UserVResult Update(Settings&& Settings);
