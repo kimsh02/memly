@@ -10,13 +10,13 @@ struct FlashcardRow {
     std::string                UpdatedAt;
     std::optional<std::string> ReviewedAt;
 
-    float Difficulty;
-    float Stability;
+    double Difficulty;
+    double Stability;
 
     std::string                FrontText;
     std::string                FrontNormText;
     std::string                BackText;
     std::string                BackNormText;
-    std::string                AudioPath;
+    std::optional<std::string> AudioPath;
     std::optional<std::string> ImagePath;
 };

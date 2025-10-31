@@ -1,14 +1,13 @@
 BEGIN TRANSACTION;
 
-CREATE TABLE IF NOT EXISTS schema_migrations (
-  version    BIGINT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS migrations (
+  version    UINTEGER PRIMARY KEY,
   applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS settings (
   id               UUID PRIMARY KEY DEFAULT uuidv7(),
-  target_lang_idx  INTEGER NOT NULL,
-  name             VARCHAR
+  target_lang_idx  UINTEGER NOT NULL,
 );
 
 CREATE TABLE IF NOT EXISTS decks (
@@ -30,7 +29,7 @@ CREATE TABLE IF NOT EXISTS cards (
   front_norm_text  VARCHAR NOT NULL,
   back_text        VARCHAR NOT NULL,
   back_norm_text   VARCHAR NOT NULL,
-  audio_path       VARCHAR NOT NULL,
+  audio_path       VARCHAR,
   image_path       VARCHAR,
 
   UNIQUE(deck_id, front_text)
