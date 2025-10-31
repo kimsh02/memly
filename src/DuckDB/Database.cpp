@@ -9,8 +9,7 @@ Database::Database()
     : m_Database(AppData::DatabaseFile())
     , m_Connection(m_Database) {
     EnsureSchema();
-
-    // TODO: Append to schema_migrations table
+    RunMigrations();
 }
 
 std::unique_ptr<duckdb::MaterializedQueryResult>
@@ -25,6 +24,9 @@ Database::Query(const std::string& Sql) {
 
 void Database::EnsureSchema() {
     Query(AppResources::SQLSchema());
+}
+
+void Database::RunMigrations() {
 }
 
 [[nodiscard]] Database::PreparedStatement

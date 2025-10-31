@@ -1,14 +1,16 @@
 #pragma once
 
+#include <duckdb.hpp>
+
 #include <optional>
 #include <string>
 
 struct FlashcardRow {
-    const std::size_t          Id;
-    const std::size_t          DeckId;
-    const std::string          CreatedAt;
-    std::string                UpdatedAt;
-    std::optional<std::string> ReviewedAt;
+    const std::size_t                  Id;
+    const std::size_t                  DeckId;
+    const duckdb::timestamp_t          CreatedAt;
+    duckdb::timestamp_t                UpdatedAt;
+    std::optional<duckdb::timestamp_t> ReviewedAt;
 
     double Difficulty;
     double Stability;

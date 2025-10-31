@@ -49,6 +49,7 @@ private:
     std::unique_ptr<duckdb::MaterializedQueryResult> Query(const std::string&);
 
     void EnsureSchema();
+    void RunMigrations();
 };
 
 struct DatabaseError {};

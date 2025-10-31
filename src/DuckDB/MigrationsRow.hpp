@@ -1,8 +1,8 @@
 #pragma once
 
-#include <string>
+#include <duckdb.hpp>
 
 struct MigrationsRow {
-    const std::size_t Version;
-    const std::string AppliedAt;
+    const std::size_t         Version;
+    const duckdb::timestamp_t AppliedAt;
 };
