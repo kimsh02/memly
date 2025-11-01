@@ -87,6 +87,15 @@ qt_add_executable(memly
     ${ALL_SOURCES}
 )
 
+if(APPLE)
+    set_target_properties(memly PROPERTIES
+        MACOSX_BUNDLE TRUE
+        OUTPUT_NAME "Memly"
+        MACOSX_BUNDLE_BUNDLE_NAME "Memly"
+        MACOSX_BUNDLE_GUI_IDENTIFIER "com.kimsh02.memly"
+    )
+endif()
+
 qt_policy(SET QTP0004 NEW)
 qt_add_qml_module(memly
     URI memly.QML
