@@ -1,6 +1,7 @@
 import QtQuick
+import QtQuick.Controls
 
-Window {
+ApplicationWindow {
     width: 960
     height: 600
     minimumWidth: 400
