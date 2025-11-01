@@ -93,7 +93,10 @@ if(APPLE)
         OUTPUT_NAME "Memly"
         MACOSX_BUNDLE_BUNDLE_NAME "Memly"
         MACOSX_BUNDLE_GUI_IDENTIFIER "com.kimsh02.memly"
+        MACOSX_BUNDLE_ICON_FILE "Memly.icns"
     )
+    set_source_files_properties("${CMAKE_SOURCE_DIR}/src/QtGUI/Assets/Memly.icns" PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+    target_sources(memly PRIVATE "${CMAKE_SOURCE_DIR}/src/QtGUI/Assets/Memly.icns")
 endif()
 
 qt_policy(SET QTP0004 NEW)
