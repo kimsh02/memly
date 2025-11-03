@@ -11,7 +11,7 @@ int main(int argc, char* argv[]) {
         App.setApplicationDisplayName(AppName.c_str());
         App.setApplicationName(AppName.c_str());
 
-          AppEngine AppEngine;
+        AppEngine AppEngine;
 
         Database Database; // TODO
 
