@@ -16,11 +16,20 @@ jobs:
               with:
                   fetch-depth: 0
 
-            - name: Install clang-format
+            - name: Install latest clang-format (apt.llvm.org)
+              shell: bash
               run: |
                   sudo apt-get update
-                  sudo apt-get install -y clang-format-21
-                  sudo ln -sf /usr/bin/clang-format-21 /usr/local/bin/clang-format
+                  sudo apt-get install -y wget gnupg
+                  # Install latest stable LLVM/Clang toolchain repo and packages
+                  sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+                  # Pick the highest installed clang-format-* and expose it as `clang-format`
+                  LATEST=$(ls /usr/bin/clang-format-* 2>/dev/null | sed -E 's|.*/clang-format-||' | sort -V | tail -1)
+                  if [[ -z "$LATEST" ]]; then
+                    echo "::error::No clang-format-* found after installing LLVM repo"; exit 1
+                  fi
+                  sudo ln -sf "/usr/bin/clang-format-${LATEST}" /usr/local/bin/clang-format
+                  clang-format --version
 
             - name: Determine diff base
               id: base
