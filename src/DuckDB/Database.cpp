@@ -27,6 +27,7 @@ void Database::EnsureSchema() {
 }
 
 void Database::RunMigrations() {
+    // TODO
 }
 
 [[nodiscard]] Database::PreparedStatement
