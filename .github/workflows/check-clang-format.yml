@@ -1,4 +1,4 @@
-name: clang-format-check
+name: check-clang-format
 
 on:
     pull_request:
@@ -7,7 +7,7 @@ on:
         branches: [main]
 
 jobs:
-    check-format:
+    check-clang-format:
         runs-on: ubuntu-latest
         if: github.event.pull_request.draft == false
         steps:
