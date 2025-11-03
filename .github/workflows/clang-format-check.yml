@@ -1,0 +1,61 @@
+name: clang-format-check
+
+on:
+    pull_request:
+        types: [opened, synchronize, reopened, ready_for_review]
+    push:
+        branches: [main]
+
+jobs:
+    check-format:
+        runs-on: ubuntu-latest
+        if: github.event.pull_request.draft == false
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Install clang-format
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y clang-format-21
+                  sudo ln -sf /usr/bin/clang-format-21 /usr/local/bin/clang-format
+
+            - name: Determine diff base
+              id: base
+              shell: bash
+              run: |
+                  if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+                    git fetch origin "${GITHUB_BASE_REF}" --depth=1
+                    MB=$(git merge-base HEAD "origin/${GITHUB_BASE_REF}")
+                  else
+                    MB=$(git rev-parse HEAD~1)
+                  fi
+                  echo "mb=$MB" >> "$GITHUB_OUTPUT"
+
+            - name: Run clang-format on changed files
+              shell: bash
+              run: |
+                  MB="${{ steps.base.outputs.mb }}"
+                  mapfile -t FILES < <(git diff --name-only --diff-filter=ACMRT "$MB"...HEAD \
+                    | grep -E '\.(c|cc|cpp|cxx|h|hh|hpp|hxx|m|mm)$' || true)
+
+                  if [[ ${#FILES[@]} -eq 0 ]]; then
+                    echo "No C/C++/Obj-C files changed."
+                    exit 0
+                  fi
+
+                  clang-format --version
+                  FAIL=0
+                  for f in "${FILES[@]}"; do
+                    # Fail if clang-format would change the file
+                    clang-format --dry-run -Werror -style=file "$f" || FAIL=1
+                  done
+
+                  if [[ $FAIL -ne 0 ]]; then
+                    echo "::error::Some files are not formatted. Run: clang-format -i -style=file <file>..."
+                    echo "Changed files checked:"
+                    printf '%s\n' "${FILES[@]}"
+                    exit 1
+                  fi
