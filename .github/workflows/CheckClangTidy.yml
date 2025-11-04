@@ -9,24 +9,33 @@ on:
 jobs:
     clang-tidy:
         runs-on: ubuntu-latest
+
+        env:
+            CMAKE_BUILD_TYPE: Debug
+
         steps:
             - name: Checkout
               uses: actions/checkout@v4
 
-            - name: Install Clang and Clang-Tidy
+            - name: Install toolchain and Qt
               run: |
                   sudo apt-get update
-                  sudo apt-get install -y clang clang-tidy
+                  sudo apt-get install -y \
+                    clang clang-tidy cmake ninja-build \
+                    qt6-base-dev qt6-declarative-dev qt6-tools-dev \
+                    qt6-base-dev-tools qt6-qmltooling-plugins \
+                    libgl1-mesa-dev
 
             - name: Configure (CMake, generate compile_commands.json)
               run: |
                   cmake -S . -B build \
-                    -DCMAKE_BUILD_TYPE=Debug \
-                    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+                    -G Ninja \
+                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
+                    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+                    -DCMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6
 
-            - name: Run clang-tidy (respect .clang-tidy)
+            - name: Run clang-tidy
               run: |
-                  # Find all C++ source files, excluding the build directory
                   mapfile -t Files < <(find . -path ./build -prune -o -name '*.cpp' -print)
 
                   if [ ${#Files[@]} -eq 0 ]; then

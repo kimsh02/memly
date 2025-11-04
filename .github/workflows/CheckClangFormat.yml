@@ -55,7 +55,7 @@ jobs:
                     | grep -E '\.(c|cc|cpp|cxx|h|hh|hpp|hxx|m|mm)$' || true)
 
                   if [[ ${#FILES[@]} -eq 0 ]]; then
-                    echo "No C/C++/Obj-C files changed."
+                    echo "No C/C++ files changed."
                     exit 0
                   fi
 
