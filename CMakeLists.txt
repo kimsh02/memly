@@ -50,17 +50,64 @@ set(ALL_SOURCES
 
 include(FetchContent)
 
+# ====================== DuckDB: platform-specific binaries ======================
+set(DUCKDB_VERSION "v1.4.1")
+
+# Select correct DuckDB archive and hash based on host OS + architecture
+if(APPLE)
+    # macOS universal binary (keep existing settings)
+    set(DUCKDB_URL "https://github.com/duckdb/duckdb/releases/download/${DUCKDB_VERSION}/libduckdb-osx-universal.zip")
+    set(DUCKDB_SHA "a82bde325dcbb6d1011e1014673eb288e8c1fd5f5b755d47fd245e8b37194817")
+elseif(WIN32)
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "^[Aa][Mm][Dd]64|^[Xx]86_64")
+        # Windows amd64
+        set(DUCKDB_URL "https://install.duckdb.org/${DUCKDB_VERSION}/libduckdb-windows-amd64.zip")
+        set(DUCKDB_SHA "704877e85b556640b0f20a0f07a1c1f404320210b245f51b6da0087a1c92bb76")
+    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^[Aa][Rr][Mm]64")
+        # Windows arm64
+        set(DUCKDB_URL "https://install.duckdb.org/${DUCKDB_VERSION}/libduckdb-windows-arm64.zip")
+        set(DUCKDB_SHA "851f0b89659f9ebfdecc99a9371942117fe4bc9fd9521af82fbe52be073534b6")
+    else()
+        message(FATAL_ERROR "Unsupported Windows architecture for DuckDB: ${CMAKE_SYSTEM_PROCESSOR}")
+    endif()
+elseif(UNIX)
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "^[Aa][Mm][Dd]64|^[Xx]86_64")
+        # Linux amd64
+        set(DUCKDB_URL "https://install.duckdb.org/${DUCKDB_VERSION}/libduckdb-linux-amd64.zip")
+        set(DUCKDB_SHA "ce859962fe96ca952d53571964dafa0168644283a76a2c669b3f73120d710edb")
+    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^[Aa][Rr][Mm]64|^[Aa][Aa][Rr][Cc][Hh]64")
+        # Linux arm64
+        set(DUCKDB_URL "https://install.duckdb.org/${DUCKDB_VERSION}/libduckdb-linux-arm64.zip")
+        set(DUCKDB_SHA "4aa05a74956b1d57f05a139623943231caeee36286c9f42ff10dc278b6df0b6e")
+    else()
+        message(FATAL_ERROR "Unsupported Linux architecture for DuckDB: ${CMAKE_SYSTEM_PROCESSOR}")
+    endif()
+else()
+    message(FATAL_ERROR "Unsupported platform for DuckDB")
+endif()
+
 FetchContent_Declare(
     libduckdb
-    URL https://github.com/duckdb/duckdb/releases/download/v1.4.1/libduckdb-osx-universal.zip
-    URL_HASH SHA256=a82bde325dcbb6d1011e1014673eb288e8c1fd5f5b755d47fd245e8b37194817
+    URL "${DUCKDB_URL}"
+    URL_HASH "SHA256=${DUCKDB_SHA}"
 )
 FetchContent_MakeAvailable(libduckdb)
 
-set(_duckdb_lib "${libduckdb_SOURCE_DIR}/libduckdb.dylib")
-if(NOT EXISTS "${_duckdb_lib}")
-    set(_duckdb_lib "${libduckdb_SOURCE_DIR}/lib/libduckdb.dylib")
+# Determine DuckDB library filename and location per-platform
+if(APPLE)
+    set(_duckdb_lib_name "libduckdb.dylib")
+elseif(WIN32)
+    set(_duckdb_lib_name "duckdb.dll")
+else()
+    # Assume generic Unix (Linux, etc.)
+    set(_duckdb_lib_name "libduckdb.so")
 endif()
+
+set(_duckdb_lib "${libduckdb_SOURCE_DIR}/${_duckdb_lib_name}")
+if(NOT EXISTS "${_duckdb_lib}")
+    set(_duckdb_lib "${libduckdb_SOURCE_DIR}/lib/${_duckdb_lib_name}")
+endif()
+
 set(_duckdb_inc "${libduckdb_SOURCE_DIR}")
 if(NOT EXISTS "${_duckdb_inc}/duckdb.hpp")
     set(_duckdb_inc "${libduckdb_SOURCE_DIR}/include")
