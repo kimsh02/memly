@@ -1,0 +1,40 @@
+name: check-clang-tidy
+
+on:
+    pull_request:
+        branches: [main]
+    push:
+        branches: [main]
+
+jobs:
+    check-clang-tidy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Install Clang and Clang-Tidy
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y clang clang-tidy
+
+            - name: Configure (CMake, generate compile_commands.json)
+              run: |
+                  cmake -S . -B build \
+                    -DCMAKE_BUILD_TYPE=Debug \
+                    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+            - name: Run clang-tidy (respect .clang-tidy)
+              run: |
+                  # Find all C++ source files, excluding the build directory
+                  mapfile -t Files < <(find . -path ./build -prune -o -name '*.cpp' -print)
+
+                  if [ ${#Files[@]} -eq 0 ]; then
+                    echo "No .cpp files found."
+                    exit 0
+                  fi
+
+                  clang-tidy \
+                    -p build \
+                    "${Files[@]}"
