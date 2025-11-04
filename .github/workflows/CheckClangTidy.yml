@@ -1,4 +1,4 @@
-name: check-clang-tidy
+name: Check Clang Tidy
 
 on:
     pull_request:
@@ -7,9 +7,8 @@ on:
         branches: [main]
 
 jobs:
-    check-clang-tidy:
+    clang-tidy:
         runs-on: ubuntu-latest
-
         steps:
             - name: Checkout
               uses: actions/checkout@v4
