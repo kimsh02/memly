@@ -15,9 +15,6 @@ int main(int argc, char* argv[]) {
 
         Database Database; // TODO
 
-        if (true) 
-                return 1;
-
         return App.exec();
     } catch (const std::exception& Exception) {
         Utility::LogAndExit(Exception.what());
