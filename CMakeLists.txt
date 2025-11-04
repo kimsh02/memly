@@ -134,7 +134,9 @@ qt_add_executable(memly
     ${ALL_SOURCES}
 )
 
-qt_policy(SET QTP0004 NEW)
+if(COMMAND qt_policy)
+    qt_policy(SET QTP0004 NEW)
+endif()
 qt_add_qml_module(memly
     URI memly.QML
     VERSION 1.0
