@@ -32,14 +32,15 @@ std::string AppResources::QMLMainURL() {
     return std::string("qrc:/memly/QML/Main.qml");
 }
 
-static std::string SQLString(const std::string& Qrc) {
-    QFile File(Qrc.c_str());
+static std::string SQLString(const std::string& QtResourcePath) {
+    QFile File(QtResourcePath.c_str());
     if (!File.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        Utility::LogAndExit();
+        Utility::LogAndExit(
+            std::format("Read Qt resource file \"{}\"", QtResourcePath));
     }
     return QTextStream(&File).readAll().toStdString();
 }
 
 std::string AppResources::SQLSchema() {
-    return SQLString(":/memly/DuckDB/SQL/Schema.sql");
+    return SQLString(":/memly/Database/SQL/Schema.sql");
 }

@@ -22,13 +22,13 @@ foreach(_qml IN LISTS QT_QML)
 endforeach()
 file(GLOB_RECURSE QT_ASSETS CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtGUI/Assets/*")
 
-# DuckDB
-file(GLOB_RECURSE DB_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/DuckDB/*.cpp")
-file(GLOB_RECURSE DB_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/DuckDB/*.[Hh]*")
+# Database
+file(GLOB_RECURSE DB_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Database/*.cpp")
+file(GLOB_RECURSE DB_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Database/*.[Hh]*")
 
 # SQL
 file(GLOB SQL_FILES CONFIGURE_DEPENDS
-    "${CMAKE_SOURCE_DIR}/src/DuckDB/SQL/*.sql"
+    "${CMAKE_SOURCE_DIR}/src/Database/SQL/*.sql"
     "${CMAKE_SOURCE_DIR}/src/TransactionScripts/SQL/*.sql")
 
 # C++

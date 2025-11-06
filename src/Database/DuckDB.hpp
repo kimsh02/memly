@@ -4,14 +4,14 @@
 
 #include "Common/Utility.hpp"
 
-class Database {
+class DuckDB {
 public:
-    explicit Database();
+    explicit DuckDB();
 
-    Database(const Database&)            = delete;
-    Database& operator=(const Database&) = delete;
-    Database(Database&&)                 = delete;
-    Database& operator=(Database&&)      = delete;
+    DuckDB(const DuckDB&)            = delete;
+    DuckDB& operator=(const DuckDB&) = delete;
+    DuckDB(DuckDB&&)                 = delete;
+    DuckDB& operator=(DuckDB&&)      = delete;
 
     class PreparedStatement {
     public:
@@ -31,7 +31,7 @@ public:
         }
 
     private:
-        friend class Database;
+        friend class DuckDB;
         std::unique_ptr<duckdb::PreparedStatement> m_PreparedStatement;
 
         explicit PreparedStatement(
@@ -39,11 +39,11 @@ public:
             : m_PreparedStatement(std::move(PreparedStatement)) {};
     };
 
-    [[nodiscard]] Database::PreparedStatement
+    [[nodiscard]] DuckDB::PreparedStatement
     PrepareStatement(const std::string& Sql);
 
 private:
-    duckdb::DuckDB     m_Database;
+    duckdb::DuckDB     m_DuckDB;
     duckdb::Connection m_Connection;
 
     std::unique_ptr<duckdb::MaterializedQueryResult> Query(const std::string&);
@@ -52,4 +52,4 @@ private:
     void RunMigrations();
 };
 
-struct DatabaseError {};
+struct DuckDBError {};

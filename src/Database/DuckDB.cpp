@@ -1,19 +1,19 @@
-#include "Database.hpp"
+#include "DuckDB.hpp"
 
 #include <duckdb.hpp>
 
 #include "Common/Files.hpp"
 #include "Common/Utility.hpp"
 
-Database::Database()
-    : m_Database(AppData::DatabaseFile())
-    , m_Connection(m_Database) {
+DuckDB::DuckDB()
+    : m_DuckDB(AppData::DatabaseFile())
+    , m_Connection(m_DuckDB) {
     EnsureSchema();
     RunMigrations();
 }
 
 std::unique_ptr<duckdb::MaterializedQueryResult>
-Database::Query(const std::string& Sql) {
+DuckDB::Query(const std::string& Sql) {
     std::unique_ptr<duckdb::MaterializedQueryResult> Result =
         m_Connection.Query(Sql);
     if (Result->HasError()) {
@@ -22,20 +22,20 @@ Database::Query(const std::string& Sql) {
     return Result;
 }
 
-void Database::EnsureSchema() {
+void DuckDB::EnsureSchema() {
     Query(AppResources::SQLSchema());
 }
 
-void Database::RunMigrations() {
+void DuckDB::RunMigrations() {
     // TODO
 }
 
-[[nodiscard]] Database::PreparedStatement
-Database::PrepareStatement(const std::string& Sql) {
+[[nodiscard]] DuckDB::PreparedStatement
+DuckDB::PrepareStatement(const std::string& Sql) {
     std::unique_ptr<duckdb::PreparedStatement> PreparedStatement =
         m_Connection.Prepare(Sql);
     if (PreparedStatement->HasError()) {
         Utility::LogAndExit(PreparedStatement->GetError());
     }
-    return Database::PreparedStatement(std::move(PreparedStatement));
+    return DuckDB::PreparedStatement(std::move(PreparedStatement));
 }

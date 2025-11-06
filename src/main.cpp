@@ -1,7 +1,7 @@
 #include <QGuiApplication>
 
 #include "Common/Utility.hpp"
-#include "DuckDB/Database.hpp"
+#include "Database/DuckDB.hpp"
 #include "QtGUI/AppEngine.hpp"
 
 int main(int argc, char* argv[]) {
@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
 
         AppEngine AppEngine;
 
-        Database Database; // TODO
+        DuckDB DuckDB; // TODO
 
         return App.exec();
     } catch (const std::exception& Exception) {
