@@ -1,3 +1,3 @@
 # Contributing to Memly
 
-All contributions are welcome!
+No contributions anticipated as of current (hence the empty page), but all are welcome!
