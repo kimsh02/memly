@@ -21,7 +21,7 @@ public:
         PreparedStatement& operator=(PreparedStatement&&)      = delete;
 
         template <typename... Params>
-        std::unique_ptr<duckdb::QueryResult> Execute(Params... Args) {
+        std::unique_ptr<duckdb::QueryResult> Execute(Params&&... Args) {
             std::unique_ptr<duckdb::QueryResult> Result =
                 m_PreparedStatement->Execute(Args...);
             if (Result->HasError()) {
