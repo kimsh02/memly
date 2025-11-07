@@ -3,7 +3,8 @@
 #include <duckdb.hpp>
 
 #include "Common/Files.hpp"
-#include "Common/Utility.hpp"
+
+// #include "Common/Utility.hpp"
 
 DuckDB::DuckDB()
     : m_DuckDB(AppData::DatabaseFile())
@@ -17,7 +18,8 @@ DuckDB::Query(const std::string& Sql) {
     std::unique_ptr<duckdb::MaterializedQueryResult> Result =
         m_Connection.Query(Sql);
     if (Result->HasError()) {
-        Utility::LogAndExit(Result->GetError());
+        // Utility::LogAndExit(Result->GetError());
+        
     }
     return Result;
 }
@@ -35,7 +37,7 @@ DuckDB::PrepareStatement(const std::string& Sql) {
     std::unique_ptr<duckdb::PreparedStatement> PreparedStatement =
         m_Connection.Prepare(Sql);
     if (PreparedStatement->HasError()) {
-        Utility::LogAndExit(PreparedStatement->GetError());
+        // Utility::LogAndExit(PreparedStatement->GetError());
     }
     return DuckDB::PreparedStatement(std::move(PreparedStatement));
 }

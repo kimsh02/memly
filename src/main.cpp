@@ -1,6 +1,5 @@
 #include <QGuiApplication>
 
-#include "Common/Utility.hpp"
 #include "Database/DuckDB.hpp"
 #include "QtGUI/AppEngine.hpp"
 
@@ -13,10 +12,13 @@ int main(int argc, char* argv[]) {
 
         AppEngine AppEngine;
 
-        DuckDB DuckDB; // TODO
+        DuckDB DuckDB;
 
         return App.exec();
     } catch (const std::exception& Exception) {
-        Utility::LogAndExit(Exception.what());
+        // Placeholder
+        std::println("{}", Exception.what());
+        assert(!"Uncaught exception");
+        // TODO: Unknown exception is notified to user in GUI
     }
 }

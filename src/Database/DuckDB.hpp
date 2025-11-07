@@ -2,7 +2,8 @@
 
 #include <duckdb.hpp>
 
-#include "Common/Utility.hpp"
+// #include "Common/Utility.hpp"
+#include "DatabaseInterface.hpp"
 
 class DuckDB {
 public:
@@ -25,7 +26,7 @@ public:
             std::unique_ptr<duckdb::QueryResult> Result =
                 m_PreparedStatement->Execute(Args...);
             if (Result->HasError()) {
-                Utility::LogAndExit(Result->GetError());
+                // Utility::LogAndExit(Result->GetError());
             }
             return Result;
         }

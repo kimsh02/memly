@@ -3,7 +3,7 @@
 #include <QDir>
 #include <QStandardPaths>
 
-#include "Common/Utility.hpp"
+// #include "Common/Utility.hpp"
 
 static std::string EnsureDirectory(const std::string& Directory) {
     QDir().mkpath(Directory.c_str());
@@ -34,9 +34,11 @@ std::string AppResources::QMLMainURL() {
 
 static std::string SQLString(const std::string& QtResourcePath) {
     QFile File(QtResourcePath.c_str());
+    bool  FileOpened = File.open(QIODevice::ReadOnly | QIODevice::Text);
+    assert(FileOpened);
     if (!File.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        Utility::LogAndExit(
-            std::format("Read Qt resource file \"{}\"", QtResourcePath));
+        // Utility::LogAndExit(
+        //     std::format("Read Qt resource file \"{}\"", QtResourcePath));
     }
     return QTextStream(&File).readAll().toStdString();
 }
