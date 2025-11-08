@@ -33,7 +33,6 @@ jobs:
                     -G Ninja \
                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
                     -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-                    -DBUILD_TESTING=ON \
                     -DCMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6
 
             - name: Run clang-tidy

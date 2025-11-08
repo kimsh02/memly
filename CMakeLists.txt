@@ -177,41 +177,38 @@ qt_import_qml_plugins(memly)
 qt_finalize_executable(memly)
 
 # ======================== Tests: CTest + GoogleTest ===========================
-option(BUILD_TESTING "Build and enable tests" ON)
 
-if(BUILD_TESTING)
-    include(CTest)
-    find_package(GTest REQUIRED)
-    include(GoogleTest)
+include(CTest)
+find_package(GTest REQUIRED)
+include(GoogleTest)
 
-    file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/test/*.cpp")
+file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/test/*.cpp")
 
-    set(CORE_SOURCES
-        ${APP_CPP}
-        ${UTIL_CPP}
-        ${DB_CPP}
-        ${CORE_CPP}
-        ${TS_CPP}
-    )
+set(CORE_SOURCES
+    ${APP_CPP}
+    ${UTIL_CPP}
+    ${DB_CPP}
+    ${CORE_CPP}
+    ${TS_CPP}
+)
 
-    add_executable(test-memly
-        ${CORE_SOURCES}
-        ${TEST_SOURCES}
-    )
+add_executable(test-memly
+    ${CORE_SOURCES}
+    ${TEST_SOURCES}
+)
 
-    target_compile_definitions(test-memly PRIVATE
-        CMAKE_GENERATED_PROJECT_ROOT_DIR="${CMAKE_SOURCE_DIR}"
-    )
+target_compile_definitions(test-memly PRIVATE
+    CMAKE_GENERATED_PROJECT_ROOT_DIR="${CMAKE_SOURCE_DIR}"
+)
 
-    target_include_directories(test-memly PRIVATE "${CMAKE_SOURCE_DIR}/src")
-    target_compile_features(test-memly PUBLIC cxx_std_23)
-    target_compile_options(test-memly PRIVATE -Wall -Wextra -Wunused -pedantic -Werror)
+target_include_directories(test-memly PRIVATE "${CMAKE_SOURCE_DIR}/src")
+target_compile_features(test-memly PUBLIC cxx_std_23)
+target_compile_options(test-memly PRIVATE -Wall -Wextra -Wunused -pedantic -Werror)
 
-    target_link_libraries(test-memly PRIVATE
-        GTest::gtest_main
-        Qt6::Quick Qt6::Qml Qt6::Network Qt6::Core duckdb
-    )
-    set_target_properties(test-memly PROPERTIES BUILD_RPATH "${_duckdb_rpath_dirs}")
+target_link_libraries(test-memly PRIVATE
+    GTest::gtest_main
+    Qt6::Quick Qt6::Qml Qt6::Network Qt6::Core duckdb
+)
+set_target_properties(test-memly PROPERTIES BUILD_RPATH "${_duckdb_rpath_dirs}")
 
-    gtest_discover_tests(test-memly)
-endif()
+gtest_discover_tests(test-memly)
