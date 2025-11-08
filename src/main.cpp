@@ -15,6 +15,7 @@ int main(int argc, char* argv[]) {
         return App.exec();
     } catch (const std::exception& Exception) {
         Q_ASSERT_X(false, "", Exception.what());
-        AppError::Exit(Exception.what());
+        AppError::Exit(
+            std::format("Caught exception in main \"{}\"", Exception.what()));
     }
 }
