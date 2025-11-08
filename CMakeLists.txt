@@ -13,6 +13,10 @@ file(GLOB SRC_MAIN CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/main.cpp")
 file(GLOB_RECURSE APP_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Qt/*.cpp")
 file(GLOB_RECURSE APP_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Qt/*.[Hh]*")
 
+# Utility
+file(GLOB_RECURSE UTIL_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Utility/*.cpp")
+file(GLOB_RECURSE UTIL_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Utility/*.[Hh]*")
+
 # QML files
 set(QML_DIR "${CMAKE_SOURCE_DIR}/src/Qt/Qml")
 file(GLOB_RECURSE QT_QML CONFIGURE_DEPENDS "${QML_DIR}/*.qml")
@@ -31,15 +35,18 @@ file(GLOB SQL_FILES CONFIGURE_DEPENDS
     "${CMAKE_SOURCE_DIR}/src/Database/Sql/*.sql"
     "${CMAKE_SOURCE_DIR}/src/TransactionScripts/Sql/*.sql")
 
-# C++
+# Core
 file(GLOB_RECURSE CORE_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Core/*.cpp")
 file(GLOB_RECURSE CORE_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Core/*.[Hh]*")
+
+# TransactionScripts
 file(GLOB_RECURSE TS_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/TransactionScripts/*.cpp")
 file(GLOB_RECURSE TS_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/TransactionScripts/*.[Hh]*")
 
 set(ALL_SOURCES
     ${SRC_MAIN}
     ${APP_CPP} ${APP_HDR}
+    ${UTIL_CPP} ${UTIL_HDR}
     ${DB_CPP} ${DB_HDR}
     ${TS_CPP} ${TS_HDR}
     ${CORE_CPP} ${CORE_HDR}
@@ -181,6 +188,7 @@ if(BUILD_TESTING)
 
     set(CORE_SOURCES
         ${APP_CPP}
+        ${UTIL_CPP}
         ${DB_CPP}
         ${CORE_CPP}
         ${TS_CPP}
