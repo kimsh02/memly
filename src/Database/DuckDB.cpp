@@ -1,43 +1,51 @@
-#include "DuckDB.hpp"
+#include "DuckDb.hpp"
 
 #include <duckdb.hpp>
 
-#include "Common/Files.hpp"
+#include "Qt/AppData.hpp"
+#include "Qt/AppResources.hpp"
 
-// #include "Common/Utility.hpp"
-
-DuckDB::DuckDB()
-    : m_DuckDB(AppData::DatabaseFile())
-    , m_Connection(m_DuckDB) {
+DuckDb::DuckDb(const std::string& DatabaseFile)
+    : m_DuckDb(DatabaseFile)
+    , m_Connection(m_DuckDb) {
     EnsureSchema();
     RunMigrations();
 }
 
 std::unique_ptr<duckdb::MaterializedQueryResult>
-DuckDB::Query(const std::string& Sql) {
+DuckDb::Query(const std::string& Sql) {
     std::unique_ptr<duckdb::MaterializedQueryResult> Result =
         m_Connection.Query(Sql);
+    assert(!Result->HasError());
     if (Result->HasError()) {
-        // Utility::LogAndExit(Result->GetError());
-        
+        AppError::Exit(Result->GetError());
     }
     return Result;
 }
 
-void DuckDB::EnsureSchema() {
-    Query(AppResources::SQLSchema());
+void DuckDb::EnsureSchema() {
+    Query(AppResources::SchemaSqlString());
 }
 
-void DuckDB::RunMigrations() {
+void DuckDb::RunMigrations() {
     // TODO
 }
 
-[[nodiscard]] DuckDB::PreparedStatement
-DuckDB::PrepareStatement(const std::string& Sql) {
+[[nodiscard]] DuckDb::PreparedStatement
+DuckDb::PrepareStatement(const std::string& Sql) {
     std::unique_ptr<duckdb::PreparedStatement> PreparedStatement =
         m_Connection.Prepare(Sql);
+    assert(!PreparedStatement->HasError());
     if (PreparedStatement->HasError()) {
-        // Utility::LogAndExit(PreparedStatement->GetError());
+        AppError::Exit(PreparedStatement->GetError());
     }
-    return DuckDB::PreparedStatement(std::move(PreparedStatement));
+    return DuckDb::PreparedStatement(std::move(PreparedStatement));
+}
+
+DuckDb CreateProductionDuckDb() {
+    return DuckDb(UserData::DatabaseFilePath());
+}
+
+DuckDb CreateTestDuckDb() {
+    return DuckDb(TestData::DatabaseFilePath());
 }

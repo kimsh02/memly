@@ -2,13 +2,15 @@
 
 #include <QCoreApplication>
 
-AppEngine::AppEngine(const QUrl& MainUrl) noexcept {
+#include "Qt/AppResources.hpp"
+
+AppEngine::AppEngine() noexcept {
     QObject::connect(
         &m_Engine,
         &QQmlApplicationEngine::objectCreationFailed,
         QCoreApplication::instance(),
-        [] { QCoreApplication::exit(-1); },
+        [] { QCoreApplication::exit(1); },
         Qt::QueuedConnection);
 
-    m_Engine.load(MainUrl);
+    m_Engine.load(AppResources::MainQmlPath());
 }

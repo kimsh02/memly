@@ -9,31 +9,29 @@ find_package(Qt6 REQUIRED COMPONENTS Quick Qml Network Core)
 # Root main
 file(GLOB SRC_MAIN CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/main.cpp")
 
-# QtGUI
-file(GLOB_RECURSE GUI_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtGUI/*.cpp")
-file(GLOB_RECURSE GUI_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtGUI/*.[Hh]*")
+# Qt
+file(GLOB_RECURSE GUI_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Qt/*.cpp")
+file(GLOB_RECURSE GUI_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Qt/*.[Hh]*")
 
 # QML files
-set(QML_DIR "${CMAKE_SOURCE_DIR}/src/QtGUI/QML")
+set(QML_DIR "${CMAKE_SOURCE_DIR}/src/Qt/Qml")
 file(GLOB_RECURSE QT_QML CONFIGURE_DEPENDS "${QML_DIR}/*.qml")
 foreach(_qml IN LISTS QT_QML)
     file(RELATIVE_PATH _rel "${QML_DIR}" "${_qml}")
     set_source_files_properties("${_qml}" PROPERTIES QT_RESOURCE_ALIAS "${_rel}")
 endforeach()
-file(GLOB_RECURSE QT_ASSETS CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/QtGUI/Assets/*")
+file(GLOB_RECURSE QT_ASSETS CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Qt/Assets/*")
 
 # Database
 file(GLOB_RECURSE DB_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Database/*.cpp")
 file(GLOB_RECURSE DB_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Database/*.[Hh]*")
 
-# SQL
+# Sql
 file(GLOB SQL_FILES CONFIGURE_DEPENDS
-    "${CMAKE_SOURCE_DIR}/src/Database/SQL/*.sql"
-    "${CMAKE_SOURCE_DIR}/src/TransactionScripts/SQL/*.sql")
+    "${CMAKE_SOURCE_DIR}/src/Database/Sql/*.sql"
+    "${CMAKE_SOURCE_DIR}/src/TransactionScripts/Sql/*.sql")
 
 # C++
-file(GLOB_RECURSE COMMON_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Common/*.[Hh]*")
-file(GLOB_RECURSE COMMON_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Common/*.cpp")
 file(GLOB_RECURSE CORE_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Core/*.cpp")
 file(GLOB_RECURSE CORE_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Core/*.[Hh]*")
 file(GLOB_RECURSE TS_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/TransactionScripts/*.cpp")
@@ -43,7 +41,6 @@ set(ALL_SOURCES
     ${SRC_MAIN}
     ${GUI_CPP} ${GUI_HDR}
     ${DB_CPP} ${DB_HDR}
-    ${COMMON_CPP} ${COMMON_HDR}
     ${TS_CPP} ${TS_HDR}
     ${CORE_CPP} ${CORE_HDR}
 )
@@ -148,7 +145,7 @@ qt_add_resources(memly "Assets"
     BASE "${CMAKE_SOURCE_DIR}/src"
     FILES ${QT_ASSETS}
 )
-qt_add_resources(memly "SQL"
+qt_add_resources(memly "Sql"
     PREFIX "/memly"
     BASE "${CMAKE_SOURCE_DIR}/src"
     FILES ${SQL_FILES}
@@ -183,7 +180,6 @@ if(BUILD_TESTING)
     file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/tests/*.cpp")
 
     set(CORE_SOURCES
-        ${COMMON_CPP}
         ${GUI_CPP}
         ${DB_CPP}
         ${CORE_CPP}

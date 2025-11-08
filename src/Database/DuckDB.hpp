@@ -2,37 +2,27 @@
 
 #include <duckdb.hpp>
 
-// #include "Common/Utility.hpp"
-#include "DatabaseInterface.hpp"
+#include "Qt/AppError.hpp"
 
-class DuckDB {
+class DuckDb {
 public:
-    explicit DuckDB();
-
-    DuckDB(const DuckDB&)            = delete;
-    DuckDB& operator=(const DuckDB&) = delete;
-    DuckDB(DuckDB&&)                 = delete;
-    DuckDB& operator=(DuckDB&&)      = delete;
+    explicit DuckDb(const std::string&);
 
     class PreparedStatement {
     public:
-        PreparedStatement(const PreparedStatement&)            = delete;
-        PreparedStatement& operator=(const PreparedStatement&) = delete;
-        PreparedStatement(PreparedStatement&&)                 = delete;
-        PreparedStatement& operator=(PreparedStatement&&)      = delete;
-
         template <typename... Params>
         std::unique_ptr<duckdb::QueryResult> Execute(Params&&... Args) {
             std::unique_ptr<duckdb::QueryResult> Result =
                 m_PreparedStatement->Execute(Args...);
+            assert(!Result->HasError());
             if (Result->HasError()) {
-                // Utility::LogAndExit(Result->GetError());
+                AppError::Exit(Result->GetError());
             }
             return Result;
         }
 
     private:
-        friend class DuckDB;
+        friend class DuckDb;
         std::unique_ptr<duckdb::PreparedStatement> m_PreparedStatement;
 
         explicit PreparedStatement(
@@ -40,11 +30,11 @@ public:
             : m_PreparedStatement(std::move(PreparedStatement)) {};
     };
 
-    [[nodiscard]] DuckDB::PreparedStatement
+    [[nodiscard]] DuckDb::PreparedStatement
     PrepareStatement(const std::string& Sql);
 
 private:
-    duckdb::DuckDB     m_DuckDB;
+    duckdb::DuckDB     m_DuckDb;
     duckdb::Connection m_Connection;
 
     std::unique_ptr<duckdb::MaterializedQueryResult> Query(const std::string&);
@@ -53,4 +43,7 @@ private:
     void RunMigrations();
 };
 
-struct DuckDBError {};
+DuckDb CreateProductionDuckDb();
+DuckDb CreateTestDuckDb();
+
+struct DuckDbError {};

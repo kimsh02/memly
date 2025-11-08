@@ -2,12 +2,9 @@
 #include <QQmlApplicationEngine>
 #include <QUrl>
 
-#include "Common/Files.hpp"
-
 class AppEngine {
 public:
-    explicit AppEngine(
-        const QUrl& = QUrl(AppResources::QMLMainURL().c_str())) noexcept;
+    explicit AppEngine() noexcept;
 
     AppEngine(const AppEngine&)            = delete;
     AppEngine& operator=(const AppEngine&) = delete;
