@@ -181,7 +181,7 @@ option(BUILD_TESTING "Build and enable tests" ON)
 
 if(BUILD_TESTING)
     include(CTest)
-    find_package(GTest CONFIG REQUIRED)
+    find_package(GTest REQUIRED)
     include(GoogleTest)
 
     file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/test/*.cpp")
