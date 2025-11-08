@@ -10,8 +10,8 @@ find_package(Qt6 REQUIRED COMPONENTS Quick Qml Network Core)
 file(GLOB SRC_MAIN CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/main.cpp")
 
 # Qt
-file(GLOB_RECURSE GUI_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Qt/*.cpp")
-file(GLOB_RECURSE GUI_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Qt/*.[Hh]*")
+file(GLOB_RECURSE APP_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Qt/*.cpp")
+file(GLOB_RECURSE APP_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Qt/*.[Hh]*")
 
 # QML files
 set(QML_DIR "${CMAKE_SOURCE_DIR}/src/Qt/Qml")
@@ -39,7 +39,7 @@ file(GLOB_RECURSE TS_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/TransactionS
 
 set(ALL_SOURCES
     ${SRC_MAIN}
-    ${GUI_CPP} ${GUI_HDR}
+    ${APP_CPP} ${APP_HDR}
     ${DB_CPP} ${DB_HDR}
     ${TS_CPP} ${TS_HDR}
     ${CORE_CPP} ${CORE_HDR}
@@ -177,10 +177,10 @@ if(BUILD_TESTING)
     find_package(GTest CONFIG REQUIRED)
     include(GoogleTest)
 
-    file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/tests/*.cpp")
+    file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/test/*.cpp")
 
     set(CORE_SOURCES
-        ${GUI_CPP}
+        ${APP_CPP}
         ${DB_CPP}
         ${CORE_CPP}
         ${TS_CPP}
@@ -189,6 +189,10 @@ if(BUILD_TESTING)
     add_executable(test-memly
         ${CORE_SOURCES}
         ${TEST_SOURCES}
+    )
+
+    target_compile_definitions(test-memly PRIVATE
+        CMAKE_GENERATED_PROJECT_ROOT_DIR="${CMAKE_SOURCE_DIR}"
     )
 
     target_include_directories(test-memly PRIVATE "${CMAKE_SOURCE_DIR}/src")

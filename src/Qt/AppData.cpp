@@ -8,30 +8,16 @@ static std::string EnsureDirectory(const std::string& Directory) {
     return Directory;
 }
 
-std::string UserData::BaseDirectoryPath() {
+std::string AppData::BaseDirectoryPath() {
     return EnsureDirectory(
         QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
             .toStdString());
 }
 
-std::string UserData::DatabaseFilePath() {
-    return UserData::BaseDirectoryPath() + "/memly.duckdb";
+std::string AppData::DatabaseFilePath() {
+    return AppData::BaseDirectoryPath() + "/memly.duckdb";
 }
 
-std::string UserData::AudioDirectoryPath() {
-    return EnsureDirectory(UserData::BaseDirectoryPath() + "/Audio");
-}
-
-std::string TestData::BaseDirectoryPath() {
-    return EnsureDirectory("../../test");
-}
-
-std::string TestData::DatabaseFilePath() {
-    const std::string FilePath = TestData::BaseDirectoryPath() + "/test.duckdb";
-    QFile::remove(FilePath.c_str());
-    return FilePath;
-}
-
-std::string TestData::AudioDirectoryPath() {
-    return EnsureDirectory(TestData::BaseDirectoryPath() + "/Audio");
+std::string AppData::AudioDirectoryPath() {
+    return EnsureDirectory(AppData::BaseDirectoryPath() + "/Audio");
 }

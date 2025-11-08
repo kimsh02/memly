@@ -2,14 +2,9 @@
 
 #include <duckdb.hpp>
 
-#include "Qt/AppData.hpp"
-#include "Qt/AppResources.hpp"
-
 DuckDb::DuckDb(const std::string& DatabaseFile)
     : m_DuckDb(DatabaseFile)
     , m_Connection(m_DuckDb) {
-    EnsureSchema();
-    RunMigrations();
 }
 
 std::unique_ptr<duckdb::MaterializedQueryResult>
@@ -23,14 +18,6 @@ DuckDb::Query(const std::string& Sql) {
     return Result;
 }
 
-void DuckDb::EnsureSchema() {
-    Query(AppResources::SchemaSqlString());
-}
-
-void DuckDb::RunMigrations() {
-    // TODO
-}
-
 [[nodiscard]] DuckDb::PreparedStatement
 DuckDb::PrepareStatement(const std::string& Sql) {
     std::unique_ptr<duckdb::PreparedStatement> PreparedStatement =
@@ -40,12 +27,4 @@ DuckDb::PrepareStatement(const std::string& Sql) {
         AppError::Exit(PreparedStatement->GetError());
     }
     return DuckDb::PreparedStatement(std::move(PreparedStatement));
-}
-
-DuckDb CreateProductionDuckDb() {
-    return DuckDb(UserData::DatabaseFilePath());
-}
-
-DuckDb CreateTestDuckDb() {
-    return DuckDb(TestData::DatabaseFilePath());
 }

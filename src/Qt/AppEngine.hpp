@@ -1,6 +1,6 @@
 #pragma once
+
 #include <QQmlApplicationEngine>
-#include <QUrl>
 
 class AppEngine {
 public:

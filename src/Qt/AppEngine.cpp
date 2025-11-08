@@ -2,7 +2,7 @@
 
 #include <QCoreApplication>
 
-#include "Qt/AppResources.hpp"
+#include "Qt/QmlResource.hpp"
 
 AppEngine::AppEngine() noexcept {
     QObject::connect(
@@ -12,5 +12,5 @@ AppEngine::AppEngine() noexcept {
         [] { QCoreApplication::exit(1); },
         Qt::QueuedConnection);
 
-    m_Engine.load(AppResources::MainQmlPath());
+    m_Engine.load(QmlResource::MainWindow());
 }
