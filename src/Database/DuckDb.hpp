@@ -1,7 +1,8 @@
 #pragma once
 
-#include <Utility/Unrecoverable.hpp>
 #include <duckdb.hpp>
+
+#include "Utility/Unrecoverable.hpp"
 
 class PreparedStatement {
 public:

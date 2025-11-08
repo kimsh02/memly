@@ -2,8 +2,6 @@
 
 #include <duckdb.hpp>
 
-#include "Utility/Unrecoverable.hpp"
-
 DuckDb::DuckDb(const std::string& DatabaseFile)
     : m_DuckDb(DatabaseFile)
     , m_Connection(m_DuckDb) {
