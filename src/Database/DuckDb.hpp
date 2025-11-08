@@ -2,8 +2,6 @@
 
 #include <duckdb.hpp>
 
-#include "Qt/AppError.hpp"
-
 class DuckDb {
 public:
     explicit DuckDb(const std::string&);
@@ -24,9 +22,9 @@ public:
         std::unique_ptr<duckdb::QueryResult> Execute(Params&&... Args) {
             std::unique_ptr<duckdb::QueryResult> Result =
                 m_PreparedStatement->Execute(Args...);
-            assert(!Result->HasError());
+            assert(Result != nullptr);
             if (Result->HasError()) {
-                AppError::Exit(Result->GetError());
+                // TODO
             }
             return Result;
         }
