@@ -4,7 +4,7 @@
 template <typename FieldType>
     requires std::is_enum_v<FieldType>
 struct DomainError {
-    FieldType        Field;
+    FieldType Field;
     std::string_view Message;
 
     DomainError(FieldType Field, std::string_view Message)

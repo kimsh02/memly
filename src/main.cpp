@@ -11,11 +11,11 @@
 int main(int argc, char* argv[]) {
     try {
         QGuiApplication App(argc, argv);
-        std::string     AppName = "Memly";
+        std::string AppName = "Memly";
         App.setApplicationDisplayName(AppName.c_str());
         App.setApplicationName(AppName.c_str());
         AppEngine AppEngine;
-        DuckDb    DuckDb(AppData::DatabaseFilePath());
+        DuckDb DuckDb(AppData::DatabaseFilePath());
         DuckDb.Query(SqlResource::InitializeSchema());
 
         // DuckDb.Query("insert into decks (name) values('deck1');");

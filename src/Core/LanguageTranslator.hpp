@@ -7,10 +7,10 @@
 
 class LanguageTranslator final {
 public:
-    LanguageTranslator(const LanguageTranslator&)            = delete;
+    LanguageTranslator(const LanguageTranslator&) = delete;
     LanguageTranslator& operator=(const LanguageTranslator&) = delete;
-    LanguageTranslator(LanguageTranslator&&)                 = delete;
-    LanguageTranslator& operator=(LanguageTranslator&&)      = delete;
+    LanguageTranslator(LanguageTranslator&&) = delete;
+    LanguageTranslator& operator=(LanguageTranslator&&) = delete;
 
     explicit LanguageTranslator() noexcept {
         LoadLastTargetIndex();

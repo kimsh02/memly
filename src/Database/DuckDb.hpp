@@ -6,10 +6,10 @@
 
 class PreparedStatement {
 public:
-    PreparedStatement(const PreparedStatement&)            = delete;
+    PreparedStatement(const PreparedStatement&) = delete;
     PreparedStatement& operator=(const PreparedStatement&) = delete;
-    PreparedStatement(PreparedStatement&&)                 = delete;
-    PreparedStatement& operator=(PreparedStatement&&)      = delete;
+    PreparedStatement(PreparedStatement&&) = delete;
+    PreparedStatement& operator=(PreparedStatement&&) = delete;
 
     template <typename... Params>
     std::unique_ptr<duckdb::QueryResult> Execute(Params&&... Args) {
@@ -39,17 +39,17 @@ class DuckDb {
 public:
     explicit DuckDb(const std::string&);
 
-    DuckDb(const DuckDb&)            = delete;
+    DuckDb(const DuckDb&) = delete;
     DuckDb& operator=(const DuckDb&) = delete;
-    DuckDb(DuckDb&&)                 = delete;
-    DuckDb& operator=(DuckDb&&)      = delete;
+    DuckDb(DuckDb&&) = delete;
+    DuckDb& operator=(DuckDb&&) = delete;
 
     [[nodiscard]] PreparedStatement Prepare(const std::string& Sql);
 
     std::unique_ptr<duckdb::MaterializedQueryResult> Query(const std::string&);
 
 private:
-    duckdb::DuckDB     m_DuckDb;
+    duckdb::DuckDB m_DuckDb;
     duckdb::Connection m_Connection;
 };
 
