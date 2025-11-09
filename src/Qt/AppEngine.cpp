@@ -9,7 +9,7 @@ AppEngine::AppEngine() noexcept {
         &m_Engine,
         &QQmlApplicationEngine::objectCreationFailed,
         QCoreApplication::instance(),
-        [] { QCoreApplication::exit(1); },
+        [] { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
 
     m_Engine.load(QmlResource::MainWindow());
