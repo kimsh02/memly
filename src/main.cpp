@@ -1,3 +1,5 @@
+#include <duckdb.hpp>
+
 #include <QGuiApplication>
 
 #include "Database/DuckDb.hpp"
@@ -19,10 +21,19 @@ int main(int argc, char* argv[]) {
         // DuckDb.Query("insert into decks (name) values('deck1');");
         auto Result = DuckDb.Query("insert into decks (name) values('deck1');");
         auto ErrorType = Result->GetErrorType();
+        if (ErrorType != duckdb::ExceptionType::INVALID) {
+            std::cout << "Exception type comparison worked\n";
+        }
+        switch (ErrorType) {
+        case duckdb::ExceptionType::INVALID: {
+            break;
+        }
+        default:
+        }
         std::cout << static_cast<int>(ErrorType) << "\n";
         auto ErrorObject = Result->GetErrorObject();
         ErrorObject.ConvertErrorToJSON();
-        std::cout << ErrorObject.RawMessage() << "\n";
+        std::cout << ErrorObject.Message() << "\n";
         for (const auto& [Key, Value] : ErrorObject.ExtraInfo()) {
             std::cout << Key << ": " << Value << "\n";
         }
