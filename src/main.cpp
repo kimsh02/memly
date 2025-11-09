@@ -15,6 +15,18 @@ int main(int argc, char* argv[]) {
         AppEngine AppEngine;
         DuckDb    DuckDb(AppData::DatabaseFilePath());
         DuckDb.Query(SqlResource::InitializeSchema());
+
+        // DuckDb.Query("insert into decks (name) values('deck1');");
+        auto Result = DuckDb.Query("insert into decks (name) values('deck1');");
+        auto ErrorType = Result->GetErrorType();
+        std::cout << static_cast<int>(ErrorType) << "\n";
+        auto ErrorObject = Result->GetErrorObject();
+        ErrorObject.ConvertErrorToJSON();
+        std::cout << ErrorObject.RawMessage() << "\n";
+        for (const auto& [Key, Value] : ErrorObject.ExtraInfo()) {
+            std::cout << Key << ": " << Value << "\n";
+        }
+
         return App.exec();
     } catch (const std::exception& Exception) {
         Q_ASSERT_X(false, "", Exception.what());
