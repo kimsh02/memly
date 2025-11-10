@@ -10,19 +10,19 @@
 
 int main(int argc, char* argv[]) {
     try {
-        QGuiApplication App(argc, argv);
-        std::string AppName = "Memly";
+        QGuiApplication App{ argc, argv };
+        std::string AppName{ "Memly" };
         App.setApplicationDisplayName(AppName.c_str());
         App.setApplicationName(AppName.c_str());
-        AppEngine AppEngine;
-        DuckDb DuckDb(AppData::DatabaseFilePath());
+        AppEngine AppEngine{};
+        DuckDb DuckDb{ AppData::DatabaseFilePath() };
         DuckDb.Query(SqlResource::InitializeSchema());
 
-        auto Result =
-            DuckDb.Query("insert into decks (name) values('deutsch');");
-        auto ErrorType = Result->GetErrorType();
+        auto Result{ DuckDb.Query(
+            "insert into decks (name) values('deutsch');") };
+        auto ErrorType{ Result->GetErrorType() };
         std::cout << static_cast<int>(ErrorType) << "\n";
-        auto ErrorObject = Result->GetErrorObject();
+        auto ErrorObject{ Result->GetErrorObject() };
         ErrorObject.ConvertErrorToJSON();
         std::cout << ErrorObject.Message() << "\n";
         for (const auto& [Key, Value] : ErrorObject.ExtraInfo()) {

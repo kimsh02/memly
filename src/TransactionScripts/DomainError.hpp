@@ -8,8 +8,8 @@ struct DomainError {
     std::string_view Message;
 
     DomainError(FieldType Field, std::string_view Message)
-        : Field(Field)
-        , Message(Message) {
+        : Field{ Field }
+        , Message{ Message } {
     }
 };
 

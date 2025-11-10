@@ -12,5 +12,5 @@ public:
     AppEngine& operator=(AppEngine&&) = delete;
 
 private:
-    QQmlApplicationEngine m_Engine;
+    QQmlApplicationEngine m_Engine{};
 };

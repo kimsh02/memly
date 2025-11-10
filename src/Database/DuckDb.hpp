@@ -13,8 +13,9 @@ public:
 
     template <typename... Params>
     std::unique_ptr<duckdb::QueryResult> Execute(Params&&... Args) {
-        std::unique_ptr<duckdb::QueryResult> Result =
-            m_PreparedStatement->Execute(Args...);
+        std::unique_ptr<duckdb::QueryResult> Result{
+            m_PreparedStatement->Execute(Args...)
+        };
         assert(Result != nullptr);
         if (Result == nullptr) {
             Unrecoverable::Throw();
@@ -32,7 +33,7 @@ private:
 
     explicit PreparedStatement(
         std::unique_ptr<duckdb::PreparedStatement>&& PreparedStatement)
-        : m_PreparedStatement(std::move(PreparedStatement)) {};
+        : m_PreparedStatement{ std::move(PreparedStatement) } {};
 };
 
 class DuckDb {
