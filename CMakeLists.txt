@@ -147,7 +147,7 @@ qt_add_qml_module(memly
     QML_FILES ${QT_QML}
 )
 qt_add_resources(memly "Sql"
-    PREFIX "/memly"
+    PREFIX "/Memly"
     BASE "${CMAKE_SOURCE_DIR}/src"
     FILES ${SQL_FILES}
 )
