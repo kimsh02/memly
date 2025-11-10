@@ -166,7 +166,14 @@ set_target_properties(memly PROPERTIES
     CXX_EXTENSIONS OFF
 )
 
-target_compile_options(memly PRIVATE -Wall -Wextra -Wunused -pedantic -Werror)
+target_compile_options(memly PRIVATE
+    -Wall -Wextra -Wunused -pedantic -Werror
+    $<$<CONFIG:Debug>:-fsanitize=address -fno-omit-frame-pointer>
+)
+
+target_link_options(memly PRIVATE
+    $<$<CONFIG:Debug>:-fsanitize=address>
+)
 
 target_link_libraries(memly PRIVATE
     Qt6::Quick Qt6::Qml Qt6::Network Qt6::Core duckdb
@@ -203,7 +210,14 @@ target_compile_definitions(test-memly PRIVATE
 
 target_include_directories(test-memly PRIVATE "${CMAKE_SOURCE_DIR}/src")
 target_compile_features(test-memly PUBLIC cxx_std_23)
-target_compile_options(test-memly PRIVATE -Wall -Wextra -Wunused -pedantic -Werror)
+target_compile_options(test-memly PRIVATE
+    -Wall -Wextra -Wunused -pedantic -Werror
+    $<$<CONFIG:Debug>:-fsanitize=address -fno-omit-frame-pointer>
+)
+
+target_link_options(test-memly PRIVATE
+    $<$<CONFIG:Debug>:-fsanitize=address>
+)
 
 target_link_libraries(test-memly PRIVATE
     GTest::gtest_main
