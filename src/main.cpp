@@ -3,10 +3,10 @@
 #include <QGuiApplication>
 
 #include "Database/DuckDb.hpp"
-#include "QtApp/AppEngine.hpp"
-#include "QtApp/AppError.hpp"
-#include "QtApp/AppSqlResource.hpp"
-#include "QtApp/AppSupportData.hpp"
+#include "Qt/App/AppEngine.hpp"
+#include "Qt/App/AppError.hpp"
+#include "Qt/App/AppSqlResource.hpp"
+#include "Qt/App/AppSupportData.hpp"
 
 int main(int argc, char* argv[]) {
     try {
