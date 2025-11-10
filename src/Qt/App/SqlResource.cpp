@@ -1,4 +1,4 @@
-#include "AppSqlResource.hpp"
+#include "SqlResource.hpp"
 
 #include <QFile>
 #include <QTextStream>
@@ -10,6 +10,6 @@ static std::string SqlResourceFileToString(const std::string& QtResourcePath) {
     return QTextStream{ &File }.readAll().toStdString();
 }
 
-std::string AppSqlResource::InitializeSchemaSql() {
-    return SqlResourceFileToString(":/Memly/Database/Sql/Schema.sql");
+std::string App::SqlResource::InitializeSchemaSql() {
+    return SqlResourceFileToString(":/Memly/Migrations/Schema.sql");
 }

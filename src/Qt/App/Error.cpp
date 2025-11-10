@@ -1,8 +1,8 @@
-#include "AppError.hpp"
+#include "Error.hpp"
 
 #include <QCoreApplication>
 
-[[noreturn]] void AppError::Exit(const std::string& Message) {
+[[noreturn]] void App::Error::Exit(const std::string& Message) {
     if (QCoreApplication::instance() != nullptr) {
         // Emit on the GUI thread to open the popup
         // QMetaObject::invokeMethod(

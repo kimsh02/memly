@@ -2,6 +2,8 @@
 
 #include <string>
 
-namespace TestAppSqlResource {
+namespace TestApp {
+namespace SqlResource {
 std::string InitializeSchemaSql();
+}
 }

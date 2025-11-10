@@ -3,10 +3,10 @@
 #include <QGuiApplication>
 
 #include "Database/DuckDb.hpp"
-#include "Qt/App/AppEngine.hpp"
-#include "Qt/App/AppError.hpp"
-#include "Qt/App/AppSqlResource.hpp"
-#include "Qt/App/AppSupportData.hpp"
+#include "Qt/App/Engine.hpp"
+#include "Qt/App/Error.hpp"
+#include "Qt/App/SqlResource.hpp"
+#include "Qt/App/SupportData.hpp"
 
 int main(int argc, char* argv[]) {
     try {
@@ -14,9 +14,9 @@ int main(int argc, char* argv[]) {
         std::string AppName{ "Memly" };
         App.setApplicationDisplayName(AppName.c_str());
         App.setApplicationName(AppName.c_str());
-        AppEngine AppEngine{};
-        DuckDb DuckDb{ AppSupportData::DatabaseFilePath() };
-        DuckDb.Query(AppSqlResource::InitializeSchemaSql());
+        App::Engine AppEngine{};
+        DuckDb DuckDb{ App::SupportData::DatabaseFilePath() };
+        DuckDb.Query(App::SqlResource::InitializeSchemaSql());
 
         auto Result{ DuckDb.Query(
             "insert into decks (name) values('deutsch');") };
@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
         return App.exec();
     } catch (const std::exception& Exception) {
         Q_ASSERT_X(false, "", Exception.what());
-        AppError::Exit(std::format("Caught unrecoverable exception from \"{}\"",
-                                   Exception.what()));
+        App::Error::Exit(std::format(
+            "Caught unrecoverable exception from \"{}\"", Exception.what()));
     }
 }

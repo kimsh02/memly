@@ -2,8 +2,10 @@
 
 #include <string>
 
-namespace AppSupportData {
+namespace TestApp {
+namespace SupportData {
 std::string BaseDirectoryPath();
 std::string DatabaseFilePath();
 std::string AudioDirectoryPath();
+}
 }

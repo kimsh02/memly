@@ -31,8 +31,8 @@ file(GLOB_RECURSE DB_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Database/*.[
 
 # Sql
 file(GLOB SQL_FILES CONFIGURE_DEPENDS
-    "${CMAKE_SOURCE_DIR}/src/Database/Sql/*.sql"
-    "${CMAKE_SOURCE_DIR}/src/TransactionScripts/Sql/*.sql")
+    "${CMAKE_SOURCE_DIR}/src/Sql/Migrations/*.sql"
+    "${CMAKE_SOURCE_DIR}/src/Sql/Statements/*.sql")
 
 # Core
 file(GLOB_RECURSE CORE_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Core/*.cpp")
@@ -148,7 +148,7 @@ qt_add_qml_module(memly
 )
 qt_add_resources(memly "Sql"
     PREFIX "/Memly"
-    BASE "${CMAKE_SOURCE_DIR}/src"
+    BASE "${CMAKE_SOURCE_DIR}/src/Sql"
     FILES ${SQL_FILES}
 )
 
@@ -183,7 +183,10 @@ include(CTest)
 find_package(GTest REQUIRED)
 include(GoogleTest)
 
-file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/test/*.cpp")
+file(GLOB TEST_SOURCES CONFIGURE_DEPENDS
+    "${CMAKE_SOURCE_DIR}/test/*.cpp"
+    "${CMAKE_SOURCE_DIR}/test/TestApp/*.cpp"
+)
 
 set(CORE_SOURCES
     ${APP_CPP}

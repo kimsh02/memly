@@ -1,10 +1,10 @@
-#include "AppEngine.hpp"
+#include "Engine.hpp"
 
 #include <QCoreApplication>
 
-#include "Qt/App/AppQmlResource.hpp"
+#include "QmlResource.hpp"
 
-AppEngine::AppEngine() noexcept {
+App::Engine::Engine() noexcept {
     QObject::connect(
         &m_Engine,
         &QQmlApplicationEngine::objectCreationFailed,
@@ -12,5 +12,5 @@ AppEngine::AppEngine() noexcept {
         [] { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
 
-    m_Engine.load(AppQmlResource::MainWindow());
+    m_Engine.load(App::QmlResource::MainWindow());
 }
