@@ -2,7 +2,7 @@
 
 #include <QCoreApplication>
 
-#include "Qt/AppQmlResource.hpp"
+#include "QtApp/AppQmlResource.hpp"
 
 AppEngine::AppEngine() noexcept {
     QObject::connect(
