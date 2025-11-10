@@ -2,6 +2,6 @@
 
 #include <QString>
 
-namespace QmlResource {
+namespace AppQmlResource {
 QString MainWindow();
 }

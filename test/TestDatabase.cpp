@@ -1,12 +1,12 @@
 #include <gtest/gtest.h>
 
 #include "Database/DuckDb.hpp"
-#include "TestAppData.hpp"
-#include "TestSqlResource.hpp"
+#include "TestAppSqlResource.hpp"
+#include "TestAppSupportData.hpp"
 
 class DatabaseTests : public ::testing::Test {
 protected:
-    DuckDb m_DuckDb{ TestAppData::DatabaseFilePath() };
+    DuckDb m_DuckDb{ TestAppSupportData::DatabaseFilePath() };
 };
 
 TEST_F(DatabaseTests, TestQuery) {
@@ -15,5 +15,5 @@ TEST_F(DatabaseTests, TestQuery) {
 
 TEST_F(DatabaseTests, InitializeSchema) {
     // TODO
-    m_DuckDb.Query(TestSqlResource::InitializeSchema());
+    m_DuckDb.Query(TestAppSqlResource::InitializeSchemaSql());
 }

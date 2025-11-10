@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace TestAppData {
+namespace AppSupportData {
 std::string BaseDirectoryPath();
 std::string DatabaseFilePath();
 std::string AudioDirectoryPath();

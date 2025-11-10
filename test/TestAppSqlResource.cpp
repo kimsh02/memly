@@ -1,4 +1,4 @@
-#include "TestSqlResource.hpp"
+#include "TestAppSqlResource.hpp"
 
 #include <cassert>
 #include <fstream>
@@ -10,7 +10,7 @@ static std::string SqlResourceFileToString(const std::string& FilePath) {
                         std::istreambuf_iterator<char>() };
 }
 
-std::string TestSqlResource::InitializeSchema() {
+std::string TestAppSqlResource::InitializeSchemaSql() {
     return SqlResourceFileToString(
         std::string{ CMAKE_GENERATED_PROJECT_ROOT_DIR } +
         "/src/Database/Sql/Schema.sql");

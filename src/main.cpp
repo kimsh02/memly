@@ -3,10 +3,10 @@
 #include <QGuiApplication>
 
 #include "Database/DuckDb.hpp"
-#include "Qt/AppData.hpp"
 #include "Qt/AppEngine.hpp"
 #include "Qt/AppError.hpp"
-#include "Qt/SqlResource.hpp"
+#include "Qt/AppSqlResource.hpp"
+#include "Qt/AppSupportData.hpp"
 
 int main(int argc, char* argv[]) {
     try {
@@ -15,8 +15,8 @@ int main(int argc, char* argv[]) {
         App.setApplicationDisplayName(AppName.c_str());
         App.setApplicationName(AppName.c_str());
         AppEngine AppEngine{};
-        DuckDb DuckDb{ AppData::DatabaseFilePath() };
-        DuckDb.Query(SqlResource::InitializeSchema());
+        DuckDb DuckDb{ AppSupportData::DatabaseFilePath() };
+        DuckDb.Query(AppSqlResource::InitializeSchemaSql());
 
         auto Result{ DuckDb.Query(
             "insert into decks (name) values('deutsch');") };

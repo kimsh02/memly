@@ -1,4 +1,4 @@
-#include "TestAppData.hpp"
+#include "TestAppSupportData.hpp"
 
 #include <filesystem>
 #include <string>
@@ -8,19 +8,19 @@ static std::string EnsureDirectory(const std::string& Directory) {
     return Directory;
 }
 
-std::string TestAppData::BaseDirectoryPath() {
+std::string TestAppSupportData::BaseDirectoryPath() {
     return EnsureDirectory(std::string{ CMAKE_GENERATED_PROJECT_ROOT_DIR } +
                            "/test");
 }
 
-std::string TestAppData::DatabaseFilePath() {
-    const std::string FilePath{ TestAppData::BaseDirectoryPath() +
+std::string TestAppSupportData::DatabaseFilePath() {
+    const std::string FilePath{ TestAppSupportData::BaseDirectoryPath() +
                                 "/test.duckdb" };
     std::error_code Ec{};
     std::filesystem::remove(FilePath, Ec);
     return FilePath;
 }
 
-std::string TestAppData::AudioDirectoryPath() {
-    return EnsureDirectory(TestAppData::BaseDirectoryPath() + "/Audio");
+std::string TestAppSupportData::AudioDirectoryPath() {
+    return EnsureDirectory(TestAppSupportData::BaseDirectoryPath() + "/Audio");
 }
