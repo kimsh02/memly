@@ -18,13 +18,12 @@ file(GLOB_RECURSE UTIL_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Utility/*.
 file(GLOB_RECURSE UTIL_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Utility/*.[Hh]*")
 
 # QML files
-set(QML_DIR "${CMAKE_SOURCE_DIR}/src/Qt/Qml")
+set(QML_DIR "${CMAKE_SOURCE_DIR}/src/Qml")
 file(GLOB_RECURSE QT_QML CONFIGURE_DEPENDS "${QML_DIR}/*.qml")
 foreach(_qml IN LISTS QT_QML)
     file(RELATIVE_PATH _rel "${QML_DIR}" "${_qml}")
     set_source_files_properties("${_qml}" PROPERTIES QT_RESOURCE_ALIAS "${_rel}")
 endforeach()
-file(GLOB_RECURSE QT_ASSETS CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Qt/Assets/*")
 
 # Database
 file(GLOB_RECURSE DB_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Database/*.cpp")
@@ -142,15 +141,10 @@ if(COMMAND qt_policy)
     qt_policy(SET QTP0004 NEW)
 endif()
 qt_add_qml_module(memly
-    URI memly.QML
+    URI Memly
     VERSION 1.0
     RESOURCE_PREFIX "/"
     QML_FILES ${QT_QML}
-)
-qt_add_resources(memly "Assets"
-    PREFIX "/memly"
-    BASE "${CMAKE_SOURCE_DIR}/src"
-    FILES ${QT_ASSETS}
 )
 qt_add_resources(memly "Sql"
     PREFIX "/memly"
