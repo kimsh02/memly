@@ -142,12 +142,15 @@ qt_add_executable(memly
 if(COMMAND qt_policy)
     qt_policy(SET QTP0004 NEW)
 endif()
+
 qt_add_qml_module(memly
     URI Memly
     VERSION 1.0
     RESOURCE_PREFIX "/"
-    QML_FILES ${QT_QML}
+    QML_FILES
+    ${QT_QML}
 )
+
 qt_add_resources(memly "Sql"
     PREFIX "/Memly"
     BASE "${CMAKE_SOURCE_DIR}/src/Sql"
