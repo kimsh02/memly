@@ -8,10 +8,7 @@ ApplicationWindow {
     minimumHeight: 90
     visible: true
     title: "Memly"
-    Rectangle {
-        anchors.fill: parent
-        color: "#121212"
-    }
+    color: "#121212"
     Text {
         anchors.centerIn: parent
         text: "Hello"
