@@ -17,6 +17,7 @@ DuckDb::Query(const std::string& Sql) {
     }
     if (Result->HasError()) {
         // TODO
+        std::cout << "Error\n";
     }
     return Result;
 }

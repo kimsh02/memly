@@ -8,10 +8,10 @@ find_package(Qt6 REQUIRED COMPONENTS Quick Qml Network Core)
 
 qt_standard_project_setup(REQUIRES 6.9)
 
-# Root main
-file(GLOB SRC_MAIN CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/main.cpp")
-
 # App
+file(GLOB SRC_MAIN CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/App/main.cpp")
+
+# To move
 file(GLOB_RECURSE APP_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Qt/App/*.cpp")
 file(GLOB_RECURSE APP_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Qt/App/*.[Hh]*")
 

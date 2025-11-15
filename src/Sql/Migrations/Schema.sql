@@ -1,6 +1,6 @@
 BEGIN TRANSACTION;
 
-CREATE MACRO string_length_ok (s) AS length (s) > 0
+CREATE MACRO IF NOT EXISTS string_length_ok (s) AS length (s) > 0
 AND length (s) <= 300;
 
 CREATE TABLE
@@ -34,8 +34,8 @@ CREATE TABLE
         front_norm_text VARCHAR NOT NULL CHECK (string_length_ok (front_norm_text)),
         back_text VARCHAR NOT NULL CHECK (string_length_ok (back_text)),
         back_norm_text VARCHAR NOT NULL CHECK (string_length_ok (back_norm_text)),
-        audio_path VARCHAR CHECK,
-        image_path VARCHAR CHECK,
+        audio_path VARCHAR,
+        image_path VARCHAR,
         UNIQUE (deck_id, front_text)
     );
 

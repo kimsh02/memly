@@ -15,17 +15,23 @@ int main(int argc, char* argv[]) {
         App.setApplicationDisplayName(AppName.c_str());
         App.setApplicationName(AppName.c_str());
         App::Engine AppEngine{};
+        std::cout << App::SupportData::DatabaseFilePath() << "\n";
         DuckDb DuckDb{ App::SupportData::DatabaseFilePath() };
-        DuckDb.Query(App::SqlResource::InitializeSchemaSql());
-
-        auto Result{ DuckDb.Query(
-            "insert into decks (name) values('deutsch');") };
+        auto Result{ DuckDb.Query(App::SqlResource::InitializeSchemaSql()) };
         auto ErrorType{ Result->GetErrorType() };
         std::cout << static_cast<int>(ErrorType) << "\n";
         auto ErrorObject{ Result->GetErrorObject() };
         ErrorObject.ConvertErrorToJSON();
         std::cout << ErrorObject.Message() << "\n";
-        for (const auto& [Key, Value] : ErrorObject.ExtraInfo()) {
+
+        auto Result1{ DuckDb.Query(
+            "insert into decks (name) values('deutsch');") };
+        auto ErrorType1{ Result1->GetErrorType() };
+        std::cout << static_cast<int>(ErrorType1) << "\n";
+        auto ErrorObject1{ Result1->GetErrorObject() };
+        ErrorObject1.ConvertErrorToJSON();
+        std::cout << ErrorObject1.Message() << "\n";
+        for (const auto& [Key, Value] : ErrorObject1.ExtraInfo()) {
             std::cout << Key << ": " << Value << "\n";
         }
 
