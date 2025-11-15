@@ -3,8 +3,8 @@
 #include <QFile>
 #include <QTextStream>
 
-static std::string SqlResourceFileToString(const std::string& QtResourcePath) {
-    QFile File{ QtResourcePath.c_str() };
+static std::string SqlResourceFileToString(const QString& QtResourcePath) {
+    QFile File{ QtResourcePath };
     File.open(QIODevice::ReadOnly);
     assert(File.error() == QFileDevice::NoError);
     return QTextStream{ &File }.readAll().toStdString();

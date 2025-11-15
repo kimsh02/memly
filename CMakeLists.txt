@@ -9,11 +9,8 @@ find_package(Qt6 REQUIRED COMPONENTS Quick Qml Network Core)
 qt_standard_project_setup(REQUIRES 6.9)
 
 # App
-file(GLOB SRC_MAIN CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/App/main.cpp")
-
-# To move
-file(GLOB_RECURSE APP_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Qt/App/*.cpp")
-file(GLOB_RECURSE APP_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Qt/App/*.[Hh]*")
+file(GLOB_RECURSE APP_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/App/*.cpp")
+file(GLOB_RECURSE APP_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/App/*.[Hh]*")
 
 # Utility
 file(GLOB_RECURSE UTIL_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Utility/*.cpp")
@@ -26,10 +23,6 @@ foreach(_qml IN LISTS QT_QML)
     file(RELATIVE_PATH _rel "${QML_DIR}" "${_qml}")
     set_source_files_properties("${_qml}" PROPERTIES QT_RESOURCE_ALIAS "${_rel}")
 endforeach()
-
-# Database
-file(GLOB_RECURSE DB_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Database/*.cpp")
-file(GLOB_RECURSE DB_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/Database/*.[Hh]*")
 
 # Sql
 file(GLOB SQL_FILES CONFIGURE_DEPENDS
@@ -45,10 +38,8 @@ file(GLOB_RECURSE TS_CPP CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/TransactionS
 file(GLOB_RECURSE TS_HDR CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/TransactionScripts/*.[Hh]*")
 
 set(ALL_SOURCES
-    ${SRC_MAIN}
     ${APP_CPP} ${APP_HDR}
     ${UTIL_CPP} ${UTIL_HDR}
-    ${DB_CPP} ${DB_HDR}
     ${TS_CPP} ${TS_HDR}
     ${CORE_CPP} ${CORE_HDR}
 )
@@ -194,9 +185,7 @@ file(GLOB TEST_SOURCES CONFIGURE_DEPENDS
 )
 
 set(CORE_SOURCES
-    ${APP_CPP}
     ${UTIL_CPP}
-    ${DB_CPP}
     ${CORE_CPP}
     ${TS_CPP}
 )

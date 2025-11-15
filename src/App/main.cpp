@@ -1,30 +1,40 @@
 #include <duckdb.hpp>
 
 #include <QGuiApplication>
+#include <QQmlApplicationEngine>
 
-#include "Database/DuckDb.hpp"
-#include "Qt/App/Engine.hpp"
-#include "Qt/App/Error.hpp"
-#include "Qt/App/SqlResource.hpp"
-#include "Qt/App/SupportData.hpp"
+#include "App/Error.hpp"
+#include "App/QmlResource.hpp"
+#include "App/SqlResource.hpp"
+#include "App/SupportData.hpp"
 
 int main(int argc, char* argv[]) {
     try {
         QGuiApplication App{ argc, argv };
         std::string AppName{ "Memly" };
-        App.setApplicationDisplayName(AppName.c_str());
         App.setApplicationName(AppName.c_str());
-        App::Engine AppEngine{};
+        App.setApplicationDisplayName(AppName.c_str());
+        QQmlApplicationEngine AppEngine{};
+        QObject::connect(
+            &AppEngine,
+            &QQmlApplicationEngine::objectCreationFailed,
+            QCoreApplication::instance(),
+            [] { QCoreApplication::exit(-1); },
+            Qt::QueuedConnection);
+        AppEngine.load(App::QmlResource::MainWindow());
+
         std::cout << App::SupportData::DatabaseFilePath() << "\n";
-        DuckDb DuckDb{ App::SupportData::DatabaseFilePath() };
-        auto Result{ DuckDb.Query(App::SqlResource::InitializeSchemaSql()) };
+        duckdb::DuckDB Database{ App::SupportData::DatabaseFilePath() };
+        duckdb::Connection Connection{ Database };
+        auto Result{ Connection.Query(
+            App::SqlResource::InitializeSchemaSql()) };
         auto ErrorType{ Result->GetErrorType() };
         std::cout << static_cast<int>(ErrorType) << "\n";
         auto ErrorObject{ Result->GetErrorObject() };
         ErrorObject.ConvertErrorToJSON();
         std::cout << ErrorObject.Message() << "\n";
 
-        auto Result1{ DuckDb.Query(
+        auto Result1{ Connection.Query(
             "insert into decks (name) values('deutsch');") };
         auto ErrorType1{ Result1->GetErrorType() };
         std::cout << static_cast<int>(ErrorType1) << "\n";
